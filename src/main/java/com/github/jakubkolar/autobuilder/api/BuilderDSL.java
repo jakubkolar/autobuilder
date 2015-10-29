@@ -25,7 +25,6 @@
 package com.github.jakubkolar.autobuilder.api;
 
 
-import com.github.jakubkolar.autobuilder.AutoBuilder;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 
 import java.util.Map;
@@ -33,7 +32,7 @@ import java.util.Map;
 /**
  * Main DSL-like API for interacting with an actual builder of {@code T}.
  *
- * To obtain an instance, see {@link AutoBuilder} that is an entry point
+ * To obtain an instance, see {@link com.github.jakubkolar.autobuilder.AutoBuilder} that is an entry point
  * to the {@code AutoBuilder} library.
  *
  */

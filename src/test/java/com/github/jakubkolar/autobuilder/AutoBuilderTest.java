@@ -46,6 +46,7 @@ public class AutoBuilderTest {
         private short aShortt;
         private EmptyEnum e;
         private int[] array;
+        private static final boolean [] a = null;
 
         enum EmptyEnum {  }
 

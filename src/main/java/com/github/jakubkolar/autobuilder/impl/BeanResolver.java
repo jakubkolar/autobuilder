@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -59,7 +60,13 @@ class BeanResolver implements ValueResolver {
             Preconditions.checkNotNull(instance);
 
             // Now try to initialize the fields
+            // TODO: inherited fields are skipped now
             for (Field field : type.getDeclaredFields()) {
+                // Do not touch static fields
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+
                 field.setAccessible(true);
                 // TODO: try to catch field related exceptions?
                 Object fieldValue = resolveField(name, field);
