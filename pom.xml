@@ -49,6 +49,12 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:https://github.com/jakubkolar/autobuilder.git</connection>
+        <developerConnection>scm:git:git@github.com:jakubkolar/autobuilder.git</developerConnection>
+        <url>https://github.com/jakubkolar/autobuilder.git</url>
+    </scm>
+
     <dependencies>
 
         <!-- Commons -->
