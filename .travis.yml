@@ -15,7 +15,8 @@ before_script:
 
 install: mvn dependency:resolve dependency:resolve-plugins -V -B -P ci-coverage,ossrh-deploy
 
-script: mvn deploy -B -P ci-coverage,ossrh-deploy --settings settings.xml
+script:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && mvn deploy -B -P ci-coverage,ossrh-deploy --settings settings.xml || mvn verify -B -P ci-coverage'
 
 after_success:
   - codecov

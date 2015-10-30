@@ -196,7 +196,7 @@
             <build>
                 <plugins>
 
-                    <!-- Fully replacement for maven-deploy-plugin -->
+                    <!-- Full replacement for maven-deploy-plugin -->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -206,7 +206,12 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <tags>
+                                <branch>${env.TRAVIS_BRANCH}</branch>
+                                <tag>${env.TRAVIS_TAG}</tag>
+                                <commitId>${env.TRAVIS_COMMIT}</commitId>
+                                <version>${project.version}</version>
+                            </tags>
                         </configuration>
                     </plugin>
 
@@ -238,6 +243,21 @@
                         </executions>
                     </plugin>
 
+                    <!-- Sign artifacts -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
 

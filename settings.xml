@@ -11,4 +11,16 @@
         </server>
     </servers>
 
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <gpg.passphrase>${env.GPG_PASS}</gpg.passphrase>
+            </properties>
+        </profile>
+    </profiles>
+
 </settings>
