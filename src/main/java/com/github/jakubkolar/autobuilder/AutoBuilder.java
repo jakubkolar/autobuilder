@@ -25,7 +25,7 @@
 package com.github.jakubkolar.autobuilder;
 
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
-import com.github.jakubkolar.autobuilder.api.BuilderDSLFactory;
+import com.github.jakubkolar.autobuilder.impl.BuilderDSLFactory;
 import com.github.jakubkolar.autobuilder.api.ResolversRegistry;
 import com.github.jakubkolar.autobuilder.impl.AutoBuilderModule;
 import com.github.jakubkolar.autobuilder.spi.Initializable;

@@ -32,6 +32,8 @@ public class AutoBuilderIT {
 
     @Test
     public void testNothingJustPrintTheFields() {
+        AutoBuilder.registerValue("TestClass2.string", "SomeValue");
+
         TestClass2 t = AutoBuilder.instanceOf(TestClass2.class).build();
         System.out.println(t);
     }

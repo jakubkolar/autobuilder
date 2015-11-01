@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.api;
+package com.github.jakubkolar.autobuilder.impl;
+
+import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 
 /**
  * Instances of {@code BuilderDSL} can be obtained through this factory API.
