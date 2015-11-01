@@ -24,39 +24,45 @@
 # SOFTWARE.
 ##
 
-if [ "${TRAVIS_PULL_REQUEST}" = "false" ] ; then
+BUILD_ONLY="mvn verify -B -P ci-coverage"
+BUILD_AND_DEPLOY="mvn deploy -B -P ci-coverage,ossrh-deploy --settings settings.xml"
 
-    # Not a pull request -> potentially going to be deployed
-
-    # Get the GPG key
+function fetch_key() {
+    # Get and decrypt the GPG key
     curl --location --silent --show-error https://github.com/jakubkolar/gpg-secret/blob/master/private.key.enc?raw=true \
         | openssl aes-256-cbc -K $encrypted_12c8071d2874_key -iv $encrypted_12c8071d2874_iv -d \
         | gpg --import
+}
+
+# Not a pull request -> potentially going to be deployed
+if [ "${TRAVIS_PULL_REQUEST}" = "false" ] ; then
 
     # This is kind-of-crazy...
     PROJECT_VERSION=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec`
 
-    case "$PROJECT_VERSION" in
+    case "${PROJECT_VERSION}" in
       *-SNAPSHOT)
-        # Snapshots are always deployed
-        mvn deploy -B -P ci-coverage,ossrh-deploy --settings settings.xml
-        ;;
-
-      *)
-        # Non-snapshot versions: depends if tagged or not
-        if [ -n "${TRAVIS_TAG}" ] ; then
-            # If this is a tag (in Travis seen as a separate branch), deploy to staging and potentially release
-            mvn deploy -B -P ci-coverage,ossrh-deploy --settings settings.xml
+        # Snapshots of master branch are deployed
+        if [ "${TRAVIS_BRANCH}" = "master" ] ; then
+            fetch_key
+            ${BUILD_AND_DEPLOY}
         else
-            # Not tagged release version commit => just build + coverage, do not deploy
-            mvn verify -B -P ci-coverage
+            ${BUILD_ONLY}
         fi
         ;;
 
+      *)
+        # Non-snapshot versions are deployed only if tagged
+        if [ -n "${TRAVIS_TAG}" ] ; then
+            fetch_key
+            ${BUILD_AND_DEPLOY}
+        else
+            ${BUILD_ONLY}
+        fi
+        ;;
     esac
-
 
 else
     # Pull request? Just build and test + coverage, no deployment, javadoc, source artifacts and signing
-    mvn verify -B -P ci-coverage
+    ${BUILD_ONLY}
 fi
