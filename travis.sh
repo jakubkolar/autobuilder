@@ -27,7 +27,8 @@
 BUILD_ONLY="mvn verify -B -P ci-coverage"
 BUILD_AND_DEPLOY="mvn deploy -B -P ci-coverage,ossrh-deploy --settings settings.xml"
 
-function fetch_key() {
+fetch_key()
+{
     # Get and decrypt the GPG key
     curl --location --silent --show-error https://github.com/jakubkolar/gpg-secret/blob/master/private.key.enc?raw=true \
         | openssl aes-256-cbc -K $encrypted_12c8071d2874_key -iv $encrypted_12c8071d2874_iv -d \
