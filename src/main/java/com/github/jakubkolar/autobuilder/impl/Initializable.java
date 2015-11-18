@@ -24,14 +24,8 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+public interface Initializable {
 
-@Singleton
-class GlobalValues extends NamedResolver {
-
-    @Inject
-    public GlobalValues() {
-    }
+    void init();
 
 }

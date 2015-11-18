@@ -91,7 +91,7 @@ class BeanResolver implements ValueResolver {
         Class<?> fieldType = field.getType();
         String fieldName = field.getName();
         List<Annotation> annotations = Arrays.asList(field.getAnnotations());
-        return fieldsResolver.resolve(fieldType, beanName + "." + fieldName, annotations);
+        return fieldsResolver.resolve(fieldType, beanName + '.' + fieldName, annotations);
     }
 
     public void setFieldsResolver(@Nonnull ValueResolver fieldsResolver) {

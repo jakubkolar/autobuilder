@@ -24,8 +24,6 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
-import com.github.jakubkolar.autobuilder.api.ResolversRegistry;
-import com.github.jakubkolar.autobuilder.spi.Initializable;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 
 import javax.inject.Inject;
@@ -36,29 +34,43 @@ import java.util.ServiceLoader;
 @Singleton
 class ResolversRegistryImpl implements ResolversRegistry, Initializable {
 
-    private final GlobalResolvers globalResolvers;
-    private final GlobalValues globalValues;
+    private ResolverChain globalResolvers;
+    private NamedResolver globalValues;
 
     @Inject
-    public ResolversRegistryImpl(GlobalResolvers globalResolvers, GlobalValues globalValues) {
-        this.globalResolvers = globalResolvers;
-        this.globalValues = globalValues;
+    public ResolversRegistryImpl() {
+        this.globalResolvers = new ResolverChain();
+        this.globalValues = new NamedResolver();
     }
 
     @Override
-    public ResolversRegistry registerValue(String name, Object value, Annotation... requiredAnnotations) {
-        globalValues.add(name, value, requiredAnnotations);
+    public synchronized ResolversRegistry registerValue(String name, Object value, Annotation... requiredAnnotations) {
+        globalValues = globalValues.add(name, value, requiredAnnotations);
         return this;
     }
 
     @Override
-    public ResolversRegistry registerResolver(ValueResolver resolver) {
-        globalResolvers.add(resolver);
+    public synchronized ResolversRegistry registerResolver(ValueResolver resolver) {
+        globalResolvers = globalResolvers.add(resolver);
         return this;
     }
 
     @Override
-    public void init() {
-        ServiceLoader.load(ValueResolver.class).forEach(globalResolvers::add);
+    public synchronized void init() {
+        ServiceLoader.load(ValueResolver.class).forEach(resolver -> {
+            if (resolver instanceof Initializable) {
+                ((Initializable) resolver).init();
+            }
+            // TODO: intellij somehow thinks this is not in a synchronized context...
+            globalResolvers = globalResolvers.add(resolver);
+        });
+    }
+
+    public synchronized ResolverChain getGlobalResolvers() {
+        return globalResolvers;
+    }
+
+    public synchronized NamedResolver getGlobalValues() {
+        return globalValues;
     }
 }

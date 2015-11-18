@@ -24,14 +24,16 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 
-@Singleton
-class GlobalResolvers extends ResolverChain {
+import javax.annotation.concurrent.ThreadSafe;
+import java.lang.annotation.Annotation;
 
-    @Inject
-    public GlobalResolvers() {
-    }
+@ThreadSafe
+public interface ResolversRegistry {
+
+    ResolversRegistry registerValue(String name, Object value, Annotation... requiredAnnotations);
+
+    ResolversRegistry registerResolver(ValueResolver resolver);
 
 }

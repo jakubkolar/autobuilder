@@ -25,26 +25,37 @@
 package com.github.jakubkolar.autobuilder.impl;
 
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 class NamedResolver implements ValueResolver {
 
-    private final Map<ImmutablePair<String, Class>, RegisteredValue> namedValues;
+    @SuppressWarnings("rawtypes")
+    private final ImmutableMap<ImmutablePair<String, Class>, RegisteredValue> namedValues;
 
     public NamedResolver() {
-        this.namedValues = new HashMap<>();
+        this.namedValues = ImmutableMap.of();
+    }
+
+    @SuppressWarnings("rawtypes")
+    private NamedResolver(Map<ImmutablePair<String, Class>, RegisteredValue> oldValues, ImmutablePair<String, Class> newKey, RegisteredValue newValue) {
+        this.namedValues = ImmutableMap.<ImmutablePair<String, Class>, RegisteredValue>builder()
+                .putAll(oldValues)
+                .put(newKey, newValue)
+                .build();
     }
 
     @Nullable
     @Override
     public <T> T resolve(Class<T> type, String name, Collection<Annotation> annotations) {
+        @SuppressWarnings("rawtypes")
         RegisteredValue rv = namedValues.get(ImmutablePair.of(name, (Class) type));
 
         if (rv == null) {
@@ -71,19 +82,22 @@ class NamedResolver implements ValueResolver {
     }
 
     public NamedResolver add(String name, Object value, Collection<Annotation> requiredAnnotations) {
-        this.namedValues.put(ImmutablePair.of(name, value.getClass()), new RegisteredValue(value, requiredAnnotations));
-        return this;
+        return new NamedResolver(namedValues,
+                ImmutablePair.of(name, value.getClass()),
+                new RegisteredValue(value, requiredAnnotations));
     }
 
     public NamedResolver add(String name, Object value, Annotation... requiredAnnotations) {
-        return this.add(name, value, Arrays.asList(requiredAnnotations));
+        return add(name, value, Arrays.asList(requiredAnnotations));
     }
 
     public NamedResolver addAll(Map<String, Object> addedValues) {
-        for (Map.Entry<String, Object> entry : addedValues.entrySet()) {
-            add(entry.getKey(), entry.getValue());
+        // TODO: this can be optimized
+        NamedResolver result = this;
+        for (Entry<String, Object> entry : addedValues.entrySet()) {
+            result = add(entry.getKey(), entry.getValue());
         }
-        return this;
+        return result;
     }
 
     private static class RegisteredValue {

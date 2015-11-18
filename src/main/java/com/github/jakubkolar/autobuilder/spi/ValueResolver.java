@@ -24,6 +24,8 @@
 
 package com.github.jakubkolar.autobuilder.spi;
 
+import com.google.common.annotations.Beta;
+
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -34,6 +36,7 @@ import java.util.Collection;
  * Meaning of the metadata and the resolution strategy depends completely on the
  * implementation.
  */
+@Beta
 public interface ValueResolver {
 
     /**

@@ -25,22 +25,30 @@
 package com.github.jakubkolar.autobuilder.impl;
 
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import org.apache.commons.lang3.SystemUtils;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 class ResolverChain implements ValueResolver {
 
-    private final List<ValueResolver> resolvers;
+    private final ImmutableList<ValueResolver> resolvers;
 
     public ResolverChain(ValueResolver... resolvers) {
-        this.resolvers = new ArrayList<>(resolvers.length);
-        Collections.addAll(this.resolvers, resolvers);
+        this.resolvers = new Builder<ValueResolver>()
+                .add(resolvers)
+                .build();
+    }
+
+    private ResolverChain(List<ValueResolver> oldResolvers, ValueResolver... newResolvers) {
+        this.resolvers = new Builder<ValueResolver>()
+                .addAll(oldResolvers)
+                .add(newResolvers)
+                .build();
     }
 
     @Nullable
@@ -53,7 +61,7 @@ class ResolverChain implements ValueResolver {
             } catch (UnsupportedOperationException e) {
                 // TODO: it is probably better if the messages are just logged as a debug output
                 failedResolvers
-                        .append("\t")
+                        .append('\t')
                         .append(resolver.getClass().getSimpleName())
                         .append(": ")
                         .append(e.getMessage())
@@ -64,12 +72,11 @@ class ResolverChain implements ValueResolver {
 
         throw new UnsupportedOperationException("No suitable resolver found: "
                 + SystemUtils.LINE_SEPARATOR
-                + failedResolvers.toString());
+                + failedResolvers);
     }
 
     public ResolverChain add(ValueResolver resolver) {
-        this.resolvers.add(resolver);
-        return this;
+        return new ResolverChain(resolvers, resolver);
     }
 
 }

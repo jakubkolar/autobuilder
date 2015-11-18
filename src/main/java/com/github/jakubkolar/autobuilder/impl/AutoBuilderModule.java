@@ -24,8 +24,6 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
-import com.github.jakubkolar.autobuilder.api.ResolversRegistry;
-import com.github.jakubkolar.autobuilder.spi.Initializable;
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 import dagger.Module;
 import dagger.Provides;
@@ -38,17 +36,24 @@ public class AutoBuilderModule {
     @Provides
     public BuilderDSLFactory getFactory(
             BeanResolverFactory beanResolverFactory,
-            GlobalValues globalValues,
-            GlobalResolvers globalResolvers,
+            ResolversRegistryImpl registry,
             BuiltInResolvers builtInResolvers) {
         return new BuilderDSLFactory() {
             @Override
             public <T> BuilderDSL<T> create(Class<T> type) {
-                return new BuilderImpl<>(type,
-                        globalValues,
-                        globalResolvers,
-                        builtInResolvers,
-                        beanResolverFactory);
+                // TODO: This is a consequence of synchronized getters that give a totally
+                // false sense of thread safety, to be strictly consistent we want to avoid
+                // this (would be possible without synchronized):
+                // (first) T1: factory.create
+                // (during that) T2: registry.registerValue followed by registry.registerResolver,
+                // possible result: only registerValue is observed by the resulting builder
+                synchronized (registry) {
+                    return new BuilderImpl<>(type,
+                            registry.getGlobalValues(),
+                            registry.getGlobalResolvers(),
+                            builtInResolvers,
+                            beanResolverFactory);
+                }
             }
         };
     }

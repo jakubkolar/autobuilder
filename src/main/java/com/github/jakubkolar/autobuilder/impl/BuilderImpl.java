@@ -29,12 +29,11 @@ import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Map.Entry;
 
 class BuilderImpl<T> implements BuilderDSL<T> {
 
     private final Class<T> type;
-
-
 
     private final NamedResolver localValues;
     private final ResolverChain localResolvers;
@@ -76,18 +75,37 @@ class BuilderImpl<T> implements BuilderDSL<T> {
         beanResolver.setFieldsResolver(this.rootResolver);
     }
 
+    private BuilderImpl(Class<T> type, NamedResolver localValues, ResolverChain localResolvers, ValueResolver rootResolver) {
+        this.type = type;
+        this.localValues = localValues;
+        this.localResolvers = localResolvers;
+        this.rootResolver = rootResolver;
+    }
+
+    @Override
+    public BuilderDSL<T> with(String property, Object value) {
+        return new BuilderImpl<>(type,
+                localValues.add(type.getSimpleName() + '.' + property, value),
+                localResolvers,
+                rootResolver);
+    }
+
     @Override
     public BuilderDSL<T> with(Map<String, Object> properties) {
-        for (Map.Entry<String, Object> prop : properties.entrySet()) {
-            localValues.add(type.getSimpleName() + "." + prop.getKey(), prop.getValue());
+        // TODO: this can be optimized
+        BuilderDSL<T> result = this;
+        for (Entry<String, Object> prop : properties.entrySet()) {
+            result = with(prop.getKey(), prop.getValue());
         }
-        return this;
+        return result;
     }
 
     @Override
     public BuilderDSL<T> with(ValueResolver userResolver) {
-        localResolvers.add(userResolver);
-        return this;
+        return new BuilderImpl<>(type,
+                localValues,
+                localResolvers.add(userResolver),
+                rootResolver);
     }
 
     @Override

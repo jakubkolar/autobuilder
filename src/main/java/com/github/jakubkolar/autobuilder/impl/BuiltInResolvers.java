@@ -60,9 +60,9 @@ class BuiltInResolvers implements ValueResolver {
     }
 
     @SafeVarargs
-    private final <T> T resolveWith(Class<T> type, String name, BiFunction<Class<T>, String, T>... functions) {
-        for (BiFunction<Class<T>, String, T> f : functions) {
-            T result = f.apply(type, name);
+    private static <T> T resolveWith(Class<T> type, String name, BiFunction<Class<T>, String, T>... functions) {
+        for (BiFunction<Class<T>, String, T> resolver : functions) {
+            T result = resolver.apply(type, name);
 
             // For Enums with no constants we accept null as the only valid value
             if (result != null || type.isEnum()) {

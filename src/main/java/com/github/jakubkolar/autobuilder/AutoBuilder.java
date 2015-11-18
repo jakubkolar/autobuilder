@@ -26,10 +26,11 @@ package com.github.jakubkolar.autobuilder;
 
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 import com.github.jakubkolar.autobuilder.impl.BuilderDSLFactory;
-import com.github.jakubkolar.autobuilder.api.ResolversRegistry;
+import com.github.jakubkolar.autobuilder.impl.ResolversRegistry;
 import com.github.jakubkolar.autobuilder.impl.AutoBuilderModule;
-import com.github.jakubkolar.autobuilder.spi.Initializable;
+import com.github.jakubkolar.autobuilder.impl.Initializable;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
+import com.google.common.annotations.Beta;
 import dagger.Component;
 
 import javax.annotation.Nullable;
@@ -44,6 +45,7 @@ import java.util.Set;
  * TODO:  ways of resolution: 1) Directly with a resolver or 2) Resolve as a bean with BeanResolver
  *
  */
+@Beta
 public class AutoBuilder {
 
     private AutoBuilder() { }

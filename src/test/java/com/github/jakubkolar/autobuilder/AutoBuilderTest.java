@@ -24,6 +24,7 @@
 
 package com.github.jakubkolar.autobuilder;
 
+import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.junit.Test;
@@ -49,6 +50,34 @@ public class AutoBuilderTest {
         private static final boolean [] a = null;
 
         enum EmptyEnum {  }
+
+        @Override
+        public String toString() {
+            return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        }
+    }
+
+    @Test
+    public void customerAndAddress_TestFromJavadoc() {
+        BuilderDSL<Customer> aCustomer = AutoBuilder.instanceOf(Customer.class);
+        Customer c = aCustomer.with("address", "Vodickova").build();
+        System.out.println(c);
+    }
+
+    private static class Customer {
+        String name;
+        Address address;
+
+        @Override
+        public String toString() {
+            return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        }
+    }
+
+    private static class Address {
+        String street;
+        String city;
+        String postalCode;
 
         @Override
         public String toString() {
