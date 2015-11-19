@@ -28,6 +28,7 @@ package com.github.jakubkolar.autobuilder.api;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.annotations.Beta;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -35,70 +36,99 @@ import java.util.Map;
  *
  * <p> Main purpose of builders is to create objects usable in tests without a lot of
  * coding specific to each type {@code T} that is to be created. Reflection is used to
- * inspect the type {@code T} and to get a builder that is able to create possibly
- * meaningful instances of {@code T} out of the box. You can create and instance of the
+ * inspect the type {@code T} and to get a builder that is able to create a possibly
+ * meaningful instances of {@code T} out of the box. You can create an instance of the
  * {@code BuilderDSL} using the {@link com.github.jakubkolar.autobuilder.AutoBuilder} that
- * is an entry point to the {@code AutoBuilder} library.
+ * is an entry point to the whole {@code AutoBuilder} library.
  *
  * <h3>Handling of {@code null}s</h3>
  *
  * <p> By default the value {@code null} is not considered valid, and the builder will try
  * to create objects not only for {@code T}, but also for all its properties. Depending on
  * configuration there can be exceptions to this behavior - for example, when a property
- * is annotated with {@link javax.annotation.Nullable} then the builder prefers using
+ * is annotated with {@link Nullable} then the builder prefers using
  * {@code null}.
  *
  * <h3>Value resolution</h3>
  *
  * <p> How the created objects will actually look like is subject to different configured
  * {@link ValueResolver}s. The default behavior is implemented by built-in resolvers and
- * tries to use unusual but valid instances that may reveal possible bugs in your
- * production code. The idea is that for each test you only need to specify those
- * properties <em>relevant</em> to the test case, and leave the other properties with
- * their unusual defaults. The default behavior can be customized or completely overridden
- * by registering custom resolvers that take precedence. This can be done globally in the
+ * tries to use unusual but valid values that may reveal possible bugs in your production
+ * code. The idea is that for each test you only need to specify those properties
+ * <em>relevant</em> to the test case, and leave the other properties with their unusual
+ * defaults. The default behavior can be customized or completely overridden by
+ * registering custom resolvers that take precedence. This can be done globally in the
  * {@code AutoBuilder} class or locally per builder instance. See {@link ValueResolver}
  * for more information on how the resolution works, what built-in resolvers are available
- * and what is the order in which they are invoked.
+ * and what is the order in which they are invoked. The general rule for value resolution
+ * is that the values should be uncommon but the same for each test run, or even (pseudo)
+ * random but consistently repeatable by a given <i>seed</i> value (this is yet to be
+ * implemented).
  *
  * <h3>Global and local configuration</h3>
  *
  * <p> Instances of the builder are <em>immutable and thread-safe</em> - except for any
- * modifiable or not thread-safe objects passed to the builder or global configuration. The state of the builder
- * is comprised of a global state configured by the {@code AutoBuilder} class, and a local
- * state specific to every builder instance.
- * A change of the global configuration using
- * the {@code AutoBuilder} class does not affect any existing builders, only new ones created
- * after the change. Any requested change to the local configuration returns a copy
- * of the original {@code BuilderDSL} instance, leaving the original unchanged.
+ * modifiable or not thread-safe objects passed to the builder or global configuration.
+ * The state of the builder is comprised of a global state configured by the {@code
+ * AutoBuilder} class, and a local state specific to every builder instance. A change of
+ * the global configuration using the {@code AutoBuilder} class does not affect any
+ * existing builders, only new ones created after the change. Any requested change to the
+ * local configuration returns a copy of the original {@code BuilderDSL} instance, leaving
+ * the original unchanged.
  *
  * <h3>Created objects</h3>
  *
- * <p> The builder and the created products are disconnected and do not affect each other (of course, unless they reference modifiable objects that were
- * passed to the builder). The builder is not created for a <em>single</em> object
- * construction, and can thus be used repeatedly. As the builder is immutable and
- * cannot be changed, it follows that it is not reset after building, so
- * you can continue with the previous state or you can even further customize it.
+ * <p> It follows from the immutability that the builder and the created products are
+ * disconnected and do not affect each other (of course, unless they reference modifiable
+ * objects that were passed to the builder). Another consequence of immutability is, as
+ * the builder stays in exactly the same state after each method invocation, that its
+ * {@link #build()} method can be used repeatedly to produce the product several times if
+ * needed.
  *
- * <h3>Property named paths</h3>
+ * <h3>Property names and paths</h3>
  *
  * <p> Properties are specified by their names as strings. Nested properties are supported
  * using a dot "{@code .}" as a separator. For example:
  *
  * <pre>{@code
- * class Customer {
+ * class Person {
+ *     String name;
  *     Address address;
  * }
  *
  * class Address {
  *     String street;
+ *     String city;
  * }
  *
- * // .....
- * --- work in progress ----
- * BuilderDSL<Customer> aCustomer = AutoBuilder.instanceOf(Customer.class);
- * Customer c = aCustomer.with("address.street")
+ * // How can any instance be built
+ * BuilderDSL<Person> aPerson = AutoBuilder.instanceOf(Person.class);
+ * Person anybody = aPerson.build();
+ * // anybody: Person [
+ * //   name = "whatever_name",
+ * //   address = Address [street="whatever_street", city="whatever_city"]
+ * // ]
+ * // Note: the "whatever_*" are used for illustration purposes here, actual values
+ * // may differ based on built-in and other ValueResolvers, and you should never rely
+ * // on them in your tests (as described above)
  *
+ * // Be more specific
+ * BuilderDSL<Person> aPersonFromLondon = aPerson.with("address.city", "London");
+ * Person anybodyFromLondon = aPersonFromLondon.build();
+ * // anybodyFromLondon: Person [
+ * //   name = "whatever_name",
+ * //   address = Address [street="whatever_street", city="London"]
+ * // ]
+ *
+ * // Someone in particular, reuse previous builders
+ * BuilderDSL<Person> aWizardMerchant = aPersonFromLondon
+ *      .with("address.street", "Diagon Alley");
+ *      // or .with("address", new Address("Diagon Alley", "London"));
+ * Person mrOllivander = aWizardMerchant.with("name", "Garrick Ollivander");
+ * // mrOllivander: Person [
+ * //   name = "Garrick Ollivander",
+ * //   address = Address [street="Diagon Alley", city="London"]
+ * // ]
  * }</pre>
  *
  * @author Jakub Kolar
@@ -110,19 +140,43 @@ public interface BuilderDSL<T> {
     /**
      * Uses a given {@code value} for a single property.
      *
+     * <p> It is expected that the type of the property is {@link Class#isAssignableFrom}
+     * the type of the value passed in.
+     * TODO AB-023: Otherwise, an {@code IllegalArgumentException} is thrown.
      *
-     * @param property the property that should be assigned to
-     * @param value the value to be used
-     * @return self (for method chaining)
+     * @param property the property or path that should be assigned to
+     * @param value    the actual value to be used, including {@code null}
+     * @return a new {@code BuilderDSL<T>} with the requested modification
+     * @throws IllegalArgumentException if the type of the value is not assignable to the
+     *                                  type of the property
      */
-    BuilderDSL<T> with(String property, Object value);
+    BuilderDSL<T> with(String property, @Nullable Object value);
 
     /**
-     * @param properties
-     * @return
+     * For each property or path specified by each {@link Map.Entry#getKey()} a value of
+     * the corresponding {@link Map.Entry#getValue()} is used.
+     *
+     * <p> The resulting builder is equivalent to the one obtained by calling {@link
+     * #with(String, Object)} for each entry of the map. Specifically, it means that the
+     * same restriction for the {@code value} types and target property types as in {@link
+     * #with(String, Object)} applies here.
+     *
+     * @param properties name-value pairs that should be used to supply values for given
+     *                   properties or paths
+     * @return a new {@code BuilderDSL<T>} with the requested modification(s)
+     * @throws IllegalArgumentException if the type of any value is not assignable to the
+     *                                  type of the corresponding property
      */
     BuilderDSL<T> with(Map<String, Object> properties);
 
+    /**
+     * Use an additional {@code ValueResolver}.
+     *
+     *
+     *
+     * @param userResolver
+     * @return
+     */
     BuilderDSL<T> with(ValueResolver userResolver);
 
     /**
