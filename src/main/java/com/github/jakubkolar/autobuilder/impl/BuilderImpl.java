@@ -27,6 +27,7 @@ package com.github.jakubkolar.autobuilder.impl;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -74,7 +75,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
     }
 
     @Override
-    public BuilderDSL<T> with(String property, Object value) {
+    public BuilderDSL<T> with(String property, @Nullable Object value) {
         return new BuilderImpl<>(type,
                 localValues.add(type.getSimpleName() + '.' + property, value),
                 localResolvers,

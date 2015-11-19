@@ -60,7 +60,7 @@ public class AutoBuilderTest {
     @Test
     public void customerAndAddress_TestFromJavadoc() {
         BuilderDSL<Customer> aCustomer = AutoBuilder.instanceOf(Customer.class);
-        Customer c = aCustomer.with("address", "Vodickova").build();
+        Customer c = aCustomer.with("address.street", null).build();
         System.out.println(c);
     }
 

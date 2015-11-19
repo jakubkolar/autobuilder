@@ -81,13 +81,13 @@ class NamedResolver implements ValueResolver {
         }
     }
 
-    public NamedResolver add(String name, Object value, Collection<Annotation> requiredAnnotations) {
+    public NamedResolver add(String name, @Nullable Object value, Collection<Annotation> requiredAnnotations) {
         return new NamedResolver(namedValues,
-                ImmutablePair.of(name, value.getClass()),
+                ImmutablePair.of(name, value != null ? value.getClass() : null),
                 new RegisteredValue(value, requiredAnnotations));
     }
 
-    public NamedResolver add(String name, Object value, Annotation... requiredAnnotations) {
+    public NamedResolver add(String name, @Nullable Object value, Annotation... requiredAnnotations) {
         return add(name, value, Arrays.asList(requiredAnnotations));
     }
 
@@ -101,10 +101,11 @@ class NamedResolver implements ValueResolver {
     }
 
     private static class RegisteredValue {
+        @Nullable
         Object value;
         Collection<Annotation> annotations;
 
-        RegisteredValue(Object value, Collection<Annotation> annotations) {
+        RegisteredValue(@Nullable Object value, Collection<Annotation> annotations) {
             this.value = value;
             this.annotations = annotations;
         }
