@@ -34,9 +34,10 @@ import java.util.Map.Entry;
 class BuilderImpl<T> implements BuilderDSL<T> {
 
     private final Class<T> type;
-
     private final NamedResolver localValues;
     private final ResolverChain localResolvers;
+    private final ResolverChain globalChain;
+    private final BeanResolverFactory factory;
 
     /**
      * RootResolver (Chain):
@@ -49,25 +50,22 @@ class BuilderImpl<T> implements BuilderDSL<T> {
      */
     private final ValueResolver rootResolver;
 
-    public BuilderImpl(Class<T> type,
-                       ValueResolver globalValues,
-                       ValueResolver globalResolvers,
-                       ValueResolver builtInResolvers,
-                       BeanResolverFactory factory) {
+    public BuilderImpl(Class<T> type, NamedResolver localValues, ResolverChain localResolvers, ResolverChain globalChain, BeanResolverFactory factory) {
         this.type = type;
+        this.localValues = localValues;
+        this.localResolvers = localResolvers;
+        this.globalChain = globalChain;
+        this.factory = factory;
 
-        // Our local instances
-        this.localValues = new NamedResolver();
-        this.localResolvers = new ResolverChain();
+        // This is modifiable (dependency cycle), and has to be created for each builder
+        // separately
         BeanResolver beanResolver = factory.create();
 
-        // This is the root resolver chain
+        // This is the root resolver chain - custom to each builder
         this.rootResolver = new ResolverChain(
                 localValues,
                 localResolvers,
-                globalValues,
-                globalResolvers,
-                builtInResolvers,
+                globalChain,
                 beanResolver);
 
         // This will allow for a recursive object graph resolution
@@ -75,19 +73,13 @@ class BuilderImpl<T> implements BuilderDSL<T> {
         beanResolver.setFieldsResolver(this.rootResolver);
     }
 
-    private BuilderImpl(Class<T> type, NamedResolver localValues, ResolverChain localResolvers, ValueResolver rootResolver) {
-        this.type = type;
-        this.localValues = localValues;
-        this.localResolvers = localResolvers;
-        this.rootResolver = rootResolver;
-    }
-
     @Override
     public BuilderDSL<T> with(String property, Object value) {
         return new BuilderImpl<>(type,
                 localValues.add(type.getSimpleName() + '.' + property, value),
                 localResolvers,
-                rootResolver);
+                globalChain,
+                factory);
     }
 
     @Override
@@ -105,7 +97,8 @@ class BuilderImpl<T> implements BuilderDSL<T> {
         return new BuilderImpl<>(type,
                 localValues,
                 localResolvers.add(userResolver),
-                rootResolver);
+                globalChain,
+                factory);
     }
 
     @Override

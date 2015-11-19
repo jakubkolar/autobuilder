@@ -49,9 +49,12 @@ public class AutoBuilderModule {
                 // possible result: only registerValue is observed by the resulting builder
                 synchronized (registry) {
                     return new BuilderImpl<>(type,
-                            registry.getGlobalValues(),
-                            registry.getGlobalResolvers(),
-                            builtInResolvers,
+                            new NamedResolver(),
+                            new ResolverChain(),
+                            new ResolverChain(
+                                    registry.getGlobalValues(),
+                                    registry.getGlobalResolvers(),
+                                    builtInResolvers),
                             beanResolverFactory);
                 }
             }
