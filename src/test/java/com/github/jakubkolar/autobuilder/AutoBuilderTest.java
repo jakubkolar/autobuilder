@@ -60,7 +60,9 @@ public class AutoBuilderTest {
     @Test
     public void customerAndAddress_TestFromJavadoc() {
         BuilderDSL<Customer> aCustomer = AutoBuilder.instanceOf(Customer.class);
-        Customer c = aCustomer.with("address.street", null).build();
+        // FIXME: this should fail, as it registers the same property twice
+        // TODO AB-024 and AB-025
+        Customer c = aCustomer.with("address.street", null).with("address.street", "").build();
         System.out.println(c);
     }
 

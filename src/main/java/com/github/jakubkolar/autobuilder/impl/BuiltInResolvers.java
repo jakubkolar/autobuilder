@@ -59,6 +59,7 @@ class BuiltInResolvers implements ValueResolver {
         );
     }
 
+    @Nullable
     @SafeVarargs
     private static <T> T resolveWith(Class<T> type, String name, BiFunction<Class<T>, String, T>... functions) {
         for (BiFunction<Class<T>, String, T> resolver : functions) {
@@ -73,10 +74,12 @@ class BuiltInResolvers implements ValueResolver {
         throw new UnsupportedOperationException("Built-in resolvers cannot resolve type " + type.getSimpleName());
     }
 
+    @Nullable
     private static <T> T stringResolver(Class<T> type, String name) {
-        return type.isAssignableFrom(String.class) ? type.cast(name) : null;
+        return type.isAssignableFrom(String.class) ? type.cast("whatever_" + name) : null;
     }
 
+    @Nullable
     private static <T> T primitiveTypeResolver(Class<T> type, String name) {
         if (type.isAssignableFrom(Integer.class) || type.isAssignableFrom(int.class)) {
             return Primitives.wrap(type).cast(Integer.MIN_VALUE);
@@ -85,7 +88,7 @@ class BuiltInResolvers implements ValueResolver {
             return Primitives.wrap(type).cast(Long.MIN_VALUE);
         }
         else if (type.isAssignableFrom(Float.class) || type.isAssignableFrom(float.class)) {
-            return Primitives.wrap(type).cast((float) Double.NaN);
+            return Primitives.wrap(type).cast(Float.NaN);
         }
         else if (type.isAssignableFrom(Double.class) || type.isAssignableFrom(double.class)) {
             return Primitives.wrap(type).cast(Double.NaN);
@@ -106,6 +109,7 @@ class BuiltInResolvers implements ValueResolver {
         return null;
     }
 
+    @Nullable
     private static <T> T enumResolver(Class<T> type, String name) {
         if (type.isEnum() && type.getEnumConstants().length > 0) {
             return type.getEnumConstants()[0];
@@ -114,6 +118,7 @@ class BuiltInResolvers implements ValueResolver {
         return null;
     }
 
+    @Nullable
     private static <T> T collectionResolver(Class<T> type, String name) {
         if (type.isAssignableFrom(List.class)) {
             return type.cast(Collections.emptyList());
@@ -128,6 +133,7 @@ class BuiltInResolvers implements ValueResolver {
         return null;
     }
 
+    @Nullable
     private static <T> T arrayResolver(Class<T> type, String name) {
         if (type.isArray()) {
             return type.cast(Array.newInstance(type.getComponentType(), 0));

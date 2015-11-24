@@ -102,6 +102,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
                 factory);
     }
 
+    @Nullable
     @Override
     public T build() {
         return rootResolver.resolve(type, type.getSimpleName(), Arrays.asList(type.getAnnotations()));

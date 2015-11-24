@@ -26,6 +26,8 @@ package com.github.jakubkolar.autobuilder.impl;
 
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.annotation.Nullable;
@@ -59,8 +61,12 @@ class NamedResolver implements ValueResolver {
         RegisteredValue rv = namedValues.get(ImmutablePair.of(name, (Class) type));
 
         if (rv == null) {
-            throw new UnsupportedOperationException(String.format(
-                    "There is no registered named value with name %s and type %s", name, type.getSimpleName()));
+            // TODO: try to lookup null, which this way applies to _any_ type
+            rv = namedValues.get(ImmutablePair.of(name, (Class)null));
+            if (rv == null) {
+                throw new UnsupportedOperationException(String.format(
+                        "There is no registered named value with name %s and type %s", name, type.getSimpleName()));
+            }
         }
 
         for (Annotation requiredAnnotation : rv.annotations) {
@@ -83,6 +89,7 @@ class NamedResolver implements ValueResolver {
 
     public NamedResolver add(String name, @Nullable Object value, Collection<Annotation> requiredAnnotations) {
         return new NamedResolver(namedValues,
+                // TODO: this may be a problem since for null there is no Class, so how to look it up?
                 ImmutablePair.of(name, value != null ? value.getClass() : null),
                 new RegisteredValue(value, requiredAnnotations));
     }
@@ -108,6 +115,11 @@ class NamedResolver implements ValueResolver {
         RegisteredValue(@Nullable Object value, Collection<Annotation> annotations) {
             this.value = value;
             this.annotations = annotations;
+        }
+
+        @Override
+        public String toString() {
+            return ReflectionToStringBuilder.toString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         }
     }
 }
