@@ -46,8 +46,7 @@ import java.util.Map;
  * <p> By default the value {@code null} is not considered valid, and the builder will try
  * to create objects not only for {@code T}, but also for all its properties. Depending on
  * configuration there can be exceptions to this behavior - for example, when a property
- * is annotated with {@link Nullable} then the builder prefers using
- * {@code null}.
+ * is annotated with {@link Nullable} then the builder prefers using {@code null}.
  *
  * <h3>Value resolution</h3>
  *
@@ -63,7 +62,7 @@ import java.util.Map;
  * and what is the order in which they are invoked. The general rule for value resolution
  * is that the values should be uncommon but the same for each test run, or even (pseudo)
  * random but consistently repeatable by a given <i>seed</i> value (this is yet to be
- * implemented).
+ * implemented: TODO AB-019).
  *
  * <h3>Global and local configuration</h3>
  *
@@ -88,7 +87,11 @@ import java.util.Map;
  * <h3>Property names and paths</h3>
  *
  * <p> Properties are specified by their names as strings. Nested properties are supported
- * using a dot "{@code .}" as a separator. For example:
+ * using a dot "{@code .}" as a separator. Properties specified this way can be viewed as
+ * a special {@code ValueResolver} that takes precedence over built-in and other
+ * resolvers.
+ *
+ * <p>Examples:
  *
  * <pre>{@code
  * class Person {
@@ -133,6 +136,7 @@ import java.util.Map;
  *
  * @author Jakub Kolar
  * @since 0.0.1
+ * @see ValueResolver
  */
 @Beta
 public interface BuilderDSL<T> {
@@ -144,11 +148,21 @@ public interface BuilderDSL<T> {
      * the type of the value passed in.
      * TODO AB-023: Otherwise, an {@code IllegalArgumentException} is thrown.
      *
+     * <p> Properties registered here take precedence over properties registered globally
+     * using the {@code AutoBuilder} class, over built-in resolvers, and also over any
+     * registered {@code ValueResolver}s, either local using {@link #with(ValueResolver)}
+     * or global using {@code AutoBuilder}.
+     *
+     * <p> Registering the same property name twice is not allowed, and will fail with a
+     * {@code RuntimeException}. TODO AB-025: remove this restriction,
+     * FIXME AB-024: Null values do not behave correctly here.
+     *
      * @param property the property or path that should be assigned to
      * @param value    the actual value to be used, including {@code null}
      * @return a new {@code BuilderDSL<T>} with the requested modification
      * @throws IllegalArgumentException if the type of the value is not assignable to the
-     *                                  type of the property
+     *                                  type of the property or if the property name was
+     *                                  already used
      */
     BuilderDSL<T> with(String property, @Nullable Object value);
 
@@ -161,29 +175,50 @@ public interface BuilderDSL<T> {
      * same restriction for the {@code value} types and target property types as in {@link
      * #with(String, Object)} applies here.
      *
+     * <p> It also means that the registered properties using this method and {@link
+     * #with(String, Object)} are <em>merged</em>, and that the same property name can be
+     * registered only once either by this method or by the other one.
+     *
      * @param properties name-value pairs that should be used to supply values for given
      *                   properties or paths
      * @return a new {@code BuilderDSL<T>} with the requested modification(s)
      * @throws IllegalArgumentException if the type of any value is not assignable to the
-     *                                  type of the corresponding property
+     *                                  type of the corresponding property or if any of
+     *                                  the property names was already used
      */
     BuilderDSL<T> with(Map<String, Object> properties);
 
     /**
      * Use an additional {@code ValueResolver}.
      *
+     * <p> The resulting builder keeps all the {@code ValueResolver}s registered with the
+     * previous builder (if any), plus the new {@code ValueResolver}, which takes
+     * precedence over the other resolvers and also over any global or built-in
+     * resolvers.
      *
-     *
-     * @param userResolver
-     * @return
+     * @param userResolver the new resolver to be added
+     * @return a new {@code BuilderDSL<T>} with the requested modification(s)
      */
     BuilderDSL<T> with(ValueResolver userResolver);
 
     /**
-     * s Builds a new instance of {@code T}.
+     * Builds an instance of {@code T} based on configuration of this builder.
      *
-     * @return a new instance of {@code T}
+     * <p> The configuration is comprised of all the registered properties, {@code
+     * ValueResolver}s, as well as global properties and global resolvers in {@code
+     * AutoBuilder}. How and in which order they are applied to resolve the instance and
+     * (possibly) resolve its properties is described in {@link BuilderDSL} and {@link
+     * ValueResolver}.
+     *
+     * <p> Also note that, if configured so, the builder may return an already existing
+     * instance, e.g. from a pool or a singleton, or it may even return {@code null}. So,
+     * unlike with <i>traditional</i> builders, a new instance may not always be created.
+     *
+     * @return an instance of {@code T}, or {@code null} if configured so
+     * @throws UnsupportedOperationException if the builder is unable to resolve an
+     *                                       instance of {@code T}
      */
+    @Nullable
     T build();
 
 }
