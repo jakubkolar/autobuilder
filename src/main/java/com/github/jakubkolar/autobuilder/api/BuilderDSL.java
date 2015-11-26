@@ -39,16 +39,16 @@ import java.util.Map;
  * inspect the type {@code T} and to get a builder that is able to create a possibly
  * meaningful instances of {@code T} out of the box. You can create an instance of the
  * {@code BuilderDSL} using the {@link com.github.jakubkolar.autobuilder.AutoBuilder} that
- * is an entry point to the whole {@code AutoBuilder} library.
+ * is an entry point to the whole library.
  *
- * <h3>Handling of {@code null}s</h3>
+ * <h3>Handling of {@code null}-s</h3>
  *
  * <p> By default the value {@code null} is not considered valid, and the builder will try
  * to create objects not only for {@code T}, but also for all its properties. Depending on
  * configuration there can be exceptions to this behavior - for example, when a property
  * is annotated with {@link Nullable} then the builder prefers using {@code null}.
  *
- * <h3>Value resolution</h3>
+ * <h3 id="value_resolution">Value resolution</h3>
  *
  * <p> How the created objects will actually look like is subject to different configured
  * {@link ValueResolver}s. The default behavior is implemented by built-in resolvers and
@@ -62,9 +62,9 @@ import java.util.Map;
  * and what is the order in which they are invoked. The general rule for value resolution
  * is that the values should be uncommon but the same for each test run, or even (pseudo)
  * random but consistently repeatable by a given <i>seed</i> value (this is yet to be
- * implemented: TODO AB-019).
+ * implemented: <i>TODO AB-019</i>).
  *
- * <h3>Global and local configuration</h3>
+ * <h3 id="configuration">Global and local configuration</h3>
  *
  * <p> Instances of the builder are <em>immutable and thread-safe</em> - except for any
  * modifiable or not thread-safe objects passed to the builder or global configuration.
@@ -73,14 +73,15 @@ import java.util.Map;
  * the global configuration using the {@code AutoBuilder} class does not affect any
  * existing builders, only new ones created after the change. Any requested change to the
  * local configuration returns a copy of the original {@code BuilderDSL} instance, leaving
- * the original unchanged.
+ * the original unchanged. For more information on how configuration works, see
+ * {@link ValueResolver} class.
  *
  * <h3>Created objects</h3>
  *
  * <p> It follows from the immutability that the builder and the created products are
  * disconnected and do not affect each other (of course, unless they reference modifiable
- * objects that were passed to the builder). Another consequence of immutability is, as
- * the builder stays in exactly the same state after each method invocation, that its
+ * objects that were passed to the builder). Another consequence of the immutability is,
+ * as the builder stays in exactly the same state after each method invocation, that its
  * {@link #build()} method can be used repeatedly to produce the product several times if
  * needed.
  *
@@ -91,7 +92,7 @@ import java.util.Map;
  * a special {@code ValueResolver} that takes precedence over built-in and other
  * resolvers.
  *
- * <p>Examples:
+ * <h3 id="examples">Examples</h3>
  *
  * <pre>{@code
  * class Person {
@@ -146,16 +147,16 @@ public interface BuilderDSL<T> {
      *
      * <p> It is expected that the type of the property is {@link Class#isAssignableFrom}
      * the type of the value passed in.
-     * TODO AB-023: Otherwise, an {@code IllegalArgumentException} is thrown.
+     * <i>TODO AB-023: Otherwise, an {@code IllegalArgumentException} is thrown.</i>
      *
      * <p> Properties registered here take precedence over properties registered globally
      * using the {@code AutoBuilder} class, over built-in resolvers, and also over any
      * registered {@code ValueResolver}s, either local using {@link #with(ValueResolver)}
-     * or global using {@code AutoBuilder}.
+     * or global using {@link com.github.jakubkolar.autobuilder.AutoBuilder}.
      *
      * <p> Registering the same property name twice is not allowed, and will fail with a
-     * {@code RuntimeException}. TODO AB-025: remove this restriction,
-     * FIXME AB-024: Null values do not behave correctly here.
+     * {@code RuntimeException}. <i>TODO AB-025: remove this restriction,
+     * FIXME AB-024: Null values do not behave correctly here.</i>
      *
      * @param property the property or path that should be assigned to
      * @param value    the actual value to be used, including {@code null}
@@ -167,8 +168,8 @@ public interface BuilderDSL<T> {
     BuilderDSL<T> with(String property, @Nullable Object value);
 
     /**
-     * For each property or path specified by each {@link Map.Entry#getKey()} a value of
-     * the corresponding {@link Map.Entry#getValue()} is used.
+     * For each property or path specified by each {@link java.util.Map.Entry#getKey()} a
+     * value of the corresponding {@link java.util.Map.Entry#getValue()} is used.
      *
      * <p> The resulting builder is equivalent to the one obtained by calling {@link
      * #with(String, Object)} for each entry of the map. Specifically, it means that the
@@ -207,16 +208,17 @@ public interface BuilderDSL<T> {
      * <p> The configuration is comprised of all the registered properties, {@code
      * ValueResolver}s, as well as global properties and global resolvers in {@code
      * AutoBuilder}. How and in which order they are applied to resolve the instance and
-     * (possibly) resolve its properties is described in {@link BuilderDSL} and {@link
-     * ValueResolver}.
+     * (possibly) resolve its properties is described in <a href="#value_resolution">the
+     * value resolution</a> section and in the {@link ValueResolver} class.
      *
      * <p> Also note that, if configured so, the builder may return an already existing
      * instance, e.g. from a pool or a singleton, or it may even return {@code null}. So,
-     * unlike with <i>traditional</i> builders, a new instance may not always be created.
+     * unlike with 'traditional' builders, a new instance may not always be created.
      *
      * @return an instance of {@code T}, or {@code null} if configured so
      * @throws UnsupportedOperationException if the builder is unable to resolve an
      *                                       instance of {@code T}
+     * @see <a href="#examples">Examples section</a>
      */
     @Nullable
     T build();
