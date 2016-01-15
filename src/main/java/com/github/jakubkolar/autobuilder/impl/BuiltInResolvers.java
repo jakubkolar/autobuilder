@@ -76,7 +76,8 @@ class BuiltInResolvers implements ValueResolver {
 
     @Nullable
     private static <T> T stringResolver(Class<T> type, String name) {
-        return type.isAssignableFrom(String.class) ? type.cast("whatever_" + name) : null;
+        System.out.println(type);
+        return type.isAssignableFrom(String.class) ? type.cast("any_" + name) : null;
     }
 
     @Nullable

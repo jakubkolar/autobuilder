@@ -36,7 +36,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
 
     private final Class<T> type;
     private final NamedResolver localValues;
-    private final ResolverChain localResolvers;
+    private final ResolverChain localChain;
     private final ResolverChain globalChain;
     private final BeanResolverFactory factory;
 
@@ -51,10 +51,10 @@ class BuilderImpl<T> implements BuilderDSL<T> {
      */
     private final ValueResolver rootResolver;
 
-    public BuilderImpl(Class<T> type, NamedResolver localValues, ResolverChain localResolvers, ResolverChain globalChain, BeanResolverFactory factory) {
+    public BuilderImpl(Class<T> type, NamedResolver localValues, ResolverChain localChain, ResolverChain globalChain, BeanResolverFactory factory) {
         this.type = type;
         this.localValues = localValues;
-        this.localResolvers = localResolvers;
+        this.localChain = localChain;
         this.globalChain = globalChain;
         this.factory = factory;
 
@@ -65,7 +65,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
         // This is the root resolver chain - custom to each builder
         this.rootResolver = new ResolverChain(
                 localValues,
-                localResolvers,
+                localChain,
                 globalChain,
                 beanResolver);
 
@@ -78,7 +78,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
     public BuilderDSL<T> with(String property, @Nullable Object value) {
         return new BuilderImpl<>(type,
                 localValues.add(type.getSimpleName() + '.' + property, value),
-                localResolvers,
+                localChain,
                 globalChain,
                 factory);
     }
@@ -97,7 +97,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
     public BuilderDSL<T> with(ValueResolver userResolver) {
         return new BuilderImpl<>(type,
                 localValues,
-                localResolvers.add(userResolver),
+                localChain.add(userResolver),
                 globalChain,
                 factory);
     }

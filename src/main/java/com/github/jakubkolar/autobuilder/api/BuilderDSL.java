@@ -199,6 +199,8 @@ public interface BuilderDSL<T> {
      *
      * @param userResolver the new resolver to be added
      * @return a new {@code BuilderDSL<T>} with the requested modification(s)
+     *
+     * @see <a href="#configuration">Configuration section</a>
      */
     BuilderDSL<T> with(ValueResolver userResolver);
 
