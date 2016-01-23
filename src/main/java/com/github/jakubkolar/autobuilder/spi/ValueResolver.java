@@ -28,8 +28,11 @@ import com.google.common.annotations.Beta;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Value resolver is a <em>pluggable</em> component that can be used to resolve instances
@@ -157,25 +160,26 @@ public interface ValueResolver {
 
     /**
      * Resolves an instance of type {@code T}.
-     * <p>
-     * The implementation can choose whatever strategy is appropriate. For example,
-     * it can create a fresh new object, or it can return an instance from a pool,
-     * or lookup a named singleton, etc.
      *
-     * @param type        the class object for the requested type
-     * @param name        the name of the resolved object
-     *                    (meaning depends on the context in which the resolution is
-     *                    requested, e.g. it may be a field name)
-     * @param annotations additional metadata hints for the resolution
-     *                    (content depends on the resolution context, e.g. it can be
-     *                    annotations found on a field)
+     * <p> The implementation can choose whatever strategy is appropriate. For example, it
+     * can create a fresh new object, or it can return an instance from a pool, or lookup
+     * a named singleton, etc.
+     *
      * @param <T>         the type of the result
-     * @return the resolved instance of type {@code T}, including {@code null} as a
-     * valid return value
+     * @param type        the class object for the requested type
+     * @param typeInfo    additional type information, if can be determined (e.g. using
+     *                    {@link Field#getGenericType()})
+     * @param name        the name of the resolved object (meaning depends on the context
+     *                    in which the resolution is requested, e.g. it may be a field
+     *                    name)
+     * @param annotations additional metadata hints for the resolution (content depends on
+     *                    the resolution context, e.g. it can be annotations found on a
+     *                    field)   @return the resolved instance of type {@code T},
+     *                    including {@code null} as a valid return value
      * @throws UnsupportedOperationException if the instance with the given metadata
      *                                       cannot be resolved by this resolver
      */
     @Nullable
-    <T> T resolve(Class<T> type, String name, Collection<Annotation> annotations);
+    <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations);
 
 }

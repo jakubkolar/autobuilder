@@ -34,20 +34,46 @@ public class AutoBuilderIT {
     public void testNothingJustPrintTheFields() {
         AutoBuilder.registerValue("TestClass2.string", "SomeValue");
 
+
         TestClass2 t = AutoBuilder.instanceOf(TestClass2.class).build();
         System.out.println(t);
-        t.c.compareTo("1");
+        t.c.compareTo(1);
         System.out.println(Comparable.class.isAssignableFrom(String.class));
 
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void genericClassesCannotBeResolved() {
+        GenericClass<?> t = AutoBuilder.instanceOf(GenericClass.class).build();
+        System.out.println(t);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void noTypeInfoForComparable_Unsupported() {
+        Comparable<?> t = AutoBuilder.instanceOf(Comparable.class).build();
+        System.out.println(t);
+    }
+
     public static class TestClass2 {
         public String string;
-        public Comparable<String> c;
+        public Comparable<String> c1;
+        public Comparable<Integer> c;
+        public Object o;
 
         @Override
         public String toString() {
             return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
         }
+    }
+
+    public static class GenericClass<T> {
+        T genericField;
+        Comparable<T> genericComparableField;
+        Comparable<Number> c2;
+        Comparable<? super Comparable<Integer>> c3;
+        int i;
+        byte b;
+        char ch;
+        long l;
     }
 }

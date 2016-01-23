@@ -31,8 +31,10 @@ import org.apache.commons.lang3.SystemUtils;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 class ResolverChain implements ValueResolver {
 
@@ -53,11 +55,11 @@ class ResolverChain implements ValueResolver {
 
     @Nullable
     @Override
-    public <T> T resolve(Class<T> type, String name, Collection<Annotation> annotations) {
+    public <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations) {
         StringBuilder failedResolvers = new StringBuilder();
         for (ValueResolver resolver : resolvers) {
             try {
-                return resolver.resolve(type, name, annotations);
+                return resolver.resolve(type, typeInfo, name, annotations);
             } catch (UnsupportedOperationException e) {
                 // TODO: it is probably better if the messages are just logged as a debug output
                 failedResolvers
