@@ -25,10 +25,10 @@
 package com.github.jakubkolar.autobuilder;
 
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
-import com.github.jakubkolar.autobuilder.impl.BuilderDSLFactory;
-import com.github.jakubkolar.autobuilder.impl.ResolversRegistry;
 import com.github.jakubkolar.autobuilder.impl.AutoBuilderModule;
+import com.github.jakubkolar.autobuilder.impl.BuilderDSLFactory;
 import com.github.jakubkolar.autobuilder.impl.Initializable;
+import com.github.jakubkolar.autobuilder.impl.ResolversRegistry;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.annotations.Beta;
 import dagger.Component;
