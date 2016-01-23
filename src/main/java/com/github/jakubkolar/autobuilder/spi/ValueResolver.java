@@ -54,7 +54,7 @@ import java.util.Map;
  * java.math.BigDecimal} and {@link com.github.jakubkolar.autobuilder.resolvers.BigDecimalResolver}.
  *
  * <p> <em id="specific_resolver">Specific</em> resolvers may be used to resolve types specific for a given
- * project or to override other resolvers to resolve a common type in a specific way.
+ * test case or to override other resolvers to resolve a common type in a specific way.
  * Their usage depends on use case, and they will often be used as a local configuration
  * - see {@link com.github.jakubkolar.autobuilder.api.BuilderDSL#with(ValueResolver)}.
  *
@@ -66,7 +66,7 @@ import java.util.Map;
  * and in this case the {@link com.github.jakubkolar.autobuilder.api.BuilderDSL#build()}
  * will fail with an {@code UnsupportedOperationException}.
  *
- * <h3>Resolution process</h3>
+ * <h3 id="resolution_process">Resolution process</h3>
  *
  * <p> The actual resolution of an instance with the {@code AutoBuilder} is implemented
  * using
@@ -98,37 +98,55 @@ import java.util.Map;
  * looks like this:
  * <pre>
  * Resolver Chain
- * ├── Local resolvers (per each {@link com.github.jakubkolar.autobuilder.api.BuilderDSL}, mostly <a href="#specific_resolver">specific resolvers</a>)
+ * ├── Local resolvers (per each {@code BuilderDSL}, mostly <a href="#specific_resolver">specific</a>)
  * │   ├── Named values (specified using {@link com.github.jakubkolar.autobuilder.api.BuilderDSL#with(String, Object)} or {@link com.github.jakubkolar.autobuilder.api.BuilderDSL#with(Map)}
  * │   ├── User resolver 1 (specified using {@link com.github.jakubkolar.autobuilder.api.BuilderDSL#with(ValueResolver)}
  * │   ├── User resolver 2
  * │   └── ...
- * ├── Global resolvers (available to every {@link com.github.jakubkolar.autobuilder.api.BuilderDSL}, mostly <a href="#general_resolver">general resolvers</a>)
- * │   ├── Global named values (specified using {@link com.github.jakubkolar.autobuilder.AutoBuilder#registerValue})
- * │   ├── User resolver 1 (specified using {@link @see com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver}
- * │   ├── User resolver 2
- * │   └── 01 Named values
- * ├── Built-in resolvers (non-customizable, available to all builders off-the-shelf, <a href="#greedy_resolver">greedy</a>)
- * │   ├── 01 stringResolver
- * │   ├── 02 primitiveTypeResolver
- * │   ├── 03 enumResolver
- * │   ├── 04 collectionResolver
- * │   └── 05 arrayResolver
- * └── Bean resolver
+ * ├── Global resolvers (available to every {@code BuilderDSL}, mostly <a href="#general_resolver">general</a>)
+ * │   ├── Global named values (specified using {@link com.github.jakubkolar.autobuilder.AutoBuilder#registerValue(String, Object, Annotation...)})
+ * │   ├── Global user resolver 1 (specified using {@link com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver(ValueResolver)}
+ * │   ├── Global user resolver 2
+ * │   └── ...
+ * ├── Built-in resolvers (non-customizable, available off-the-shelf, <a href="#greedy_resolver">greedy</a>)
+ * │   ├── String resolver
+ * │   ├── Primitive types resolver
+ * │   ├── Enum resolver
+ * │   ├── Collection resolver
+ * │   └── Array resolver
+ * └── <a href="#bean_resolver">Bean resolver</a>
  * </pre>
- *
- * <h3>How to register a resolver</h3>
  *
  * <h3>Resolvers available off-the-shelf</h3>
  *
- * <h3>Custom resolvers</h3>
+ * <p> Resolvers that come with the {@code AutoBuilder} library are the built-in resolvers
+ * shown in the previous section, and any additional resolvers from the package
+ * {@link com.github.jakubkolar.autobuilder.resolvers}. No special configuration is required
+ * to use them. Also note that, as already mentioned in <a href="../api/BuilderDSL.html#value_resolution">
+ *     BuilderDSL</a>, the exact result of these resolvers in not specified, as the goal
+ *     is to provide whatever instance that is valid within a given test case (the test
+ *     does not fail because of e.g. {@code java.lang.NullPointerException}), but completely
+ *     irrelevant for the result of the test (choosing any other valid instance would
+ *     yield the same test result).
+ *
+ * <h3>How to register a resolver</h3>
+ *
+ * <p> Registering an additional custom resolver of a given type using the {@code AutoBuilder} API
+ * is described in detail in the <a href="#resolution_process">resolution process</a> section.
+ * In addition to that, the JDK's {@link java.util.ServiceLoader} framework can be used
+ * to load implementations of {@code ValueResolvers}. These resolvers will be registered
+ * as global ones, exactly like if {@link com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver(ValueResolver)}
+ * was used. This way, the {@code AutoBuilder} can be enhanced by new features
+ * just by adding classes or third-party libraries to the classpath, without any additional configuration in
+ * the existing code. <a href="https://github.com/google/auto/tree/master/service">AutoService</a>
+ * library can be used to simplify configuration of the {@code ServiceLoader}.
  *
  * @author Jakub Kolar
  * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(ValueResolver)
  * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(String, Object)
  * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(Map)
- * @see com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver
- * @see com.github.jakubkolar.autobuilder.AutoBuilder#registerValue
+ * @see com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver(ValueResolver)
+ * @see com.github.jakubkolar.autobuilder.AutoBuilder#registerValue(String, Object, Annotation...)
  * @since 0.0.1
  */
 @Beta
