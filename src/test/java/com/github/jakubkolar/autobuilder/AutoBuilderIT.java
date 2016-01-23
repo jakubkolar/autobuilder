@@ -42,9 +42,23 @@ public class AutoBuilderIT {
 
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void genericClassesCannotBeResolved() {
+        GenericClass<?> t = AutoBuilder.instanceOf(GenericClass.class).build();
+        System.out.println(t);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void noTypeInfoForComparable_Unsupported() {
+        Comparable<?> t = AutoBuilder.instanceOf(Comparable.class).build();
+        System.out.println(t);
+    }
+
     public static class TestClass2 {
         public String string;
+        public Comparable<String> c1;
         public Comparable<Integer> c;
+        public Object o;
 
         @Override
         public String toString() {
@@ -52,4 +66,14 @@ public class AutoBuilderIT {
         }
     }
 
+    public static class GenericClass<T> {
+        T genericField;
+        Comparable<T> genericComparableField;
+        Comparable<Number> c2;
+        Comparable<? super Comparable<Integer>> c3;
+        int i;
+        byte b;
+        char ch;
+        long l;
+    }
 }

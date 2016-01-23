@@ -24,8 +24,8 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
-import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
+import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

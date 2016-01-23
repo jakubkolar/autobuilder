@@ -88,7 +88,7 @@ class BuiltInResolvers implements ValueResolver {
         // resolving a field of type T of a generic class,
         // for which we got to == Object.class
         if (to.isAssignableFrom(Object.class)) {
-            // If we know nothing more, that be better safe and reject to resolve
+            // If we know nothing more, then be better safe and reject to resolve
             if (!toTypeInfo.isPresent()) {
                 return false;
             }

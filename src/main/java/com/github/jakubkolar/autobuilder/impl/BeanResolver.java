@@ -24,8 +24,8 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
-import com.google.common.base.Preconditions;
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
+import com.google.common.base.Preconditions;
 import org.objenesis.Objenesis;
 
 import javax.annotation.Nonnull;
