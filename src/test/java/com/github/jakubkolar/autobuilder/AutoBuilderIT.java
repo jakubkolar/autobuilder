@@ -36,14 +36,14 @@ public class AutoBuilderIT {
 
         TestClass2 t = AutoBuilder.instanceOf(TestClass2.class).build();
         System.out.println(t);
-        t.c.compareTo(1);
+        t.c.compareTo("1");
         System.out.println(Comparable.class.isAssignableFrom(String.class));
 
     }
 
     public static class TestClass2 {
         public String string;
-        public Comparable<Integer> c;
+        public Comparable<String> c;
 
         @Override
         public String toString() {
