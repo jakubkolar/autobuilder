@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 class BuilderImpl<T> implements BuilderDSL<T> {
 
@@ -105,6 +106,6 @@ class BuilderImpl<T> implements BuilderDSL<T> {
     @Nullable
     @Override
     public T build() {
-        return rootResolver.resolve(type, type.getSimpleName(), Arrays.asList(type.getAnnotations()));
+        return rootResolver.resolve(type, Optional.empty(), type.getSimpleName(), Arrays.asList(type.getAnnotations()));
     }
 }

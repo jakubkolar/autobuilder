@@ -24,27 +24,28 @@
 
 package com.github.jakubkolar.autobuilder.resolvers;
 
+import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.auto.service.AutoService;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 @AutoService(ValueResolver.class)
 public class GuavaResolver implements ValueResolver {
 
     @Nullable
     @Override
-    public <T> T resolve(Class<T> type, String name, Collection<Annotation> annotations) {
-        if (Objects.equals(type, Optional.class)) {
-            return type.cast(Optional.absent());
+    public <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations) {
+        if (Objects.equals(type, com.google.common.base.Optional.class)) {
+            return type.cast(com.google.common.base.Optional.absent());
         }
 
         if (ImmutableCollection.class.isAssignableFrom(type)) {

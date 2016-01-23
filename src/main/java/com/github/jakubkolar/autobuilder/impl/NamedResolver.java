@@ -32,10 +32,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 class NamedResolver implements ValueResolver {
 
@@ -56,7 +58,7 @@ class NamedResolver implements ValueResolver {
 
     @Nullable
     @Override
-    public <T> T resolve(Class<T> type, String name, Collection<Annotation> annotations) {
+    public <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations) {
         @SuppressWarnings("rawtypes")
         RegisteredValue rv = namedValues.get(ImmutablePair.of(name, (Class) type));
 

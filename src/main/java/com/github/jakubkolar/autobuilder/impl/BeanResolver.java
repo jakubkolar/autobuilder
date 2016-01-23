@@ -34,9 +34,12 @@ import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 class BeanResolver implements ValueResolver {
 
@@ -52,7 +55,20 @@ class BeanResolver implements ValueResolver {
 
     @Nullable
     @Override
-    public <T> T resolve(Class<T> type, String name, Collection<Annotation> annotations) {
+    public <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations) {
+        // Objects should be resolved by Built-in resolvers, otherwise we are trying
+        // to resolve some non-reifiable type and we can only say that is of type Object
+        // (e.g. type variable T)
+        if (Objects.equals(type, Object.class)) {
+            throw new UnsupportedOperationException(
+                String.format(
+                    "Cannot resolve value for non-reifiable type '%s' with name %s " +
+                    "annotated with %s because the actual class to be resolved cannot be " +
+                    "determined at runtime (at least in a safe way that would avoid " +
+                    "ClassCastException)",
+                    typeInfo.get(), name, annotations.toString(), type));
+        }
+
         try {
             T instance = objenesis.newInstance(type);
 
@@ -86,12 +102,18 @@ class BeanResolver implements ValueResolver {
         }
     }
 
+    @Nullable
     private Object resolveField(String beanName, Field field) {
         Preconditions.checkNotNull(fieldsResolver, "Field resolver was not properly initialized!");
         Class<?> fieldType = field.getType();
         String fieldName = field.getName();
         List<Annotation> annotations = Arrays.asList(field.getAnnotations());
-        return fieldsResolver.resolve(fieldType, beanName + '.' + fieldName, annotations);
+
+        return fieldsResolver.resolve(
+                fieldType,
+                Optional.ofNullable(field.getGenericType()),
+                beanName + '.' + fieldName,
+                annotations);
     }
 
     public void setFieldsResolver(@Nonnull ValueResolver fieldsResolver) {

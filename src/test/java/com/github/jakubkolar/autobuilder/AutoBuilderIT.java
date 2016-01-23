@@ -34,20 +34,22 @@ public class AutoBuilderIT {
     public void testNothingJustPrintTheFields() {
         AutoBuilder.registerValue("TestClass2.string", "SomeValue");
 
+
         TestClass2 t = AutoBuilder.instanceOf(TestClass2.class).build();
         System.out.println(t);
-        t.c.compareTo("1");
+        t.c.compareTo(1);
         System.out.println(Comparable.class.isAssignableFrom(String.class));
 
     }
 
     public static class TestClass2 {
         public String string;
-        public Comparable<String> c;
+        public Comparable<Integer> c;
 
         @Override
         public String toString() {
             return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
         }
     }
+
 }
