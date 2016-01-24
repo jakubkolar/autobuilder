@@ -23,17 +23,15 @@
  */
 
 /**
- * <a href="https://en.wikipedia.org/wiki/Application_programming_interface">API</a>
- * (excluding SPI) - classes and interfaces meant to be used by clients.
+ * <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> (special
+ * kind of API) - interfaces and classes meant to implemented/extended by third parties.
  *
- * <p> <i>Note on backward compatibility</i>: Because interfaces from this package are
- * meant to be implemented only in the {@code AutoBuilder} library, they are subject to
- * little more <i>relaxed</i> forward compatibility restrictions. More specifically,
- * in future versions these interfaces can:
+ * <p> <i>Note on backward compatibility</i>: Interfaces from this package are
+ * meant to be implemented outside of the {@code AutoBuilder} library, and as such they
+ * are subject to <i>strict</i> forward compatibility restrictions. More specifically,
+ * in future versions these interfaces can only:
  * <ul>
- *     <li>introduce new methods</li>
- *     <li>change a type of any method return value to its subtype</li>
- *     <li>change a type of any method parameter to its supertype</li>
+ *     <li>introduce new methods with default implementation</li>
  * </ul>
  */
-package com.github.jakubkolar.autobuilder.api;
+package com.github.jakubkolar.autobuilder.spi;

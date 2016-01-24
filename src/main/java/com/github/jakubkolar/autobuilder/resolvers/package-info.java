@@ -23,17 +23,12 @@
  */
 
 /**
- * <a href="https://en.wikipedia.org/wiki/Application_programming_interface">API</a>
- * (excluding SPI) - classes and interfaces meant to be used by clients.
+ * Classes that provide extended features to the library.
  *
- * <p> <i>Note on backward compatibility</i>: Because interfaces from this package are
- * meant to be implemented only in the {@code AutoBuilder} library, they are subject to
- * little more <i>relaxed</i> forward compatibility restrictions. More specifically,
- * in future versions these interfaces can:
- * <ul>
- *     <li>introduce new methods</li>
- *     <li>change a type of any method return value to its subtype</li>
- *     <li>change a type of any method parameter to its supertype</li>
- * </ul>
+ * <p> <i>Note on backward compatibility</i>: Contents of this package are intended to be
+ * used only by the library and thus do not provide any backward compatibility guarantees.
+ * Specifically, resolvers from this package may be moved to another project because of
+ * their possible dependencies (e.g. jdk8, guava) that may not be suitable for every
+ * project using {@code AutoBuilder}.
  */
-package com.github.jakubkolar.autobuilder.api;
+package com.github.jakubkolar.autobuilder.resolvers;
