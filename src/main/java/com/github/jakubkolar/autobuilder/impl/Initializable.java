@@ -24,6 +24,11 @@
 
 package com.github.jakubkolar.autobuilder.impl;
 
+/**
+ * *** INTERNAL ***
+ *
+ * <p> Objects that may be initialized during the {@code AutoBuilder} boot sequence.
+ */
 public interface Initializable {
 
     void init();
