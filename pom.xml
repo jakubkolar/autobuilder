@@ -88,7 +88,7 @@
         <dependency>
             <groupId>org.tinylog</groupId>
             <artifactId>tinylog</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
 
         <!-- Dependency injection -->
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
-            <version>1.7.6</version>
+            <version>1.7.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
