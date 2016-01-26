@@ -38,6 +38,22 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Resolver for common types from the <a href="https://github.com/google/guava">Google
+ * Guava</a> library.
+ *
+ * <p> Currently supported types are:
+ * <ul>
+ *     <li><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html">Optional</a></li>
+ *     <li><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ImmutableCollection.html">ImmutableCollection</a></li>
+ *     <li><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ImmutableMap.html">ImmutableMap</a></li>
+ * </ul>
+ *
+ * <p> TODO AB-013: Support for more types (e.g. Multiset, Multimap)
+ *
+ * @author Jakub Kolar
+ * @since 0.0.1
+ */
 @AutoService(ValueResolver.class)
 public class GuavaResolver implements ValueResolver {
 
@@ -51,8 +67,7 @@ public class GuavaResolver implements ValueResolver {
         if (ImmutableCollection.class.isAssignableFrom(type)) {
             if (type.isAssignableFrom(ImmutableList.class)) {
                 return type.cast(ImmutableList.of());
-            }
-            else if (type.isAssignableFrom(ImmutableSet.class)) {
+            } else if (type.isAssignableFrom(ImmutableSet.class)) {
                 return type.cast(ImmutableSet.of());
             }
 

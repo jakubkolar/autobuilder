@@ -29,6 +29,13 @@ import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import javax.annotation.concurrent.ThreadSafe;
 import java.lang.annotation.Annotation;
 
+/**
+ * *** INTERNAL ***
+ *
+ * <p> API for registering global resolvers.
+ *
+ * @see ValueResolver
+ */
 @ThreadSafe
 public interface ResolversRegistry {
 

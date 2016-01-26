@@ -29,6 +29,7 @@ import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.annotations.Beta;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 import java.util.Map;
 
 /**
@@ -135,11 +136,13 @@ import java.util.Map;
  * // ]
  * }</pre>
  *
+ * @param <T> the type of object to be built
  * @author Jakub Kolar
  * @since 0.0.1
  * @see ValueResolver
  */
 @Beta
+@Immutable
 public interface BuilderDSL<T> {
 
     /**

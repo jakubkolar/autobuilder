@@ -22,28 +22,13 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.impl;
-
-import com.github.jakubkolar.autobuilder.api.BuilderDSL;
-
-import javax.annotation.concurrent.ThreadSafe;
-
 /**
- * *** INTERNAL ***
+ * Classes that provide extended features to the library.
  *
- * <p> Instances of {@code BuilderDSL} can be obtained through this factory API.
+ * <p> <i>Note on backward compatibility</i>: Contents of this package are intended to be
+ * used only by the library and thus do not provide any backward compatibility guarantees.
+ * Specifically, resolvers from this package may be moved to another project because of
+ * their possible dependencies (e.g. jdk8, guava) that may not be suitable for every
+ * project using {@code AutoBuilder}.
  */
-@ThreadSafe
-public interface BuilderDSLFactory {
-
-    /**
-     * *** INTERNAL ***
-     *
-     * <p> Creates a {@code BuilderDSL}.
-     *
-     * @param type class object for the required type
-     * @param <T> the type of objects the builder will build
-     * @return a brand new instance of {@link BuilderDSL}
-     */
-    <T> BuilderDSL<T> create(Class<T> type);
-}
+package com.github.jakubkolar.autobuilder.resolvers;

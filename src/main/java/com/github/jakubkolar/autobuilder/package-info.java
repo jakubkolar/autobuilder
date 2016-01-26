@@ -22,28 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.impl;
-
-import com.github.jakubkolar.autobuilder.api.BuilderDSL;
-
-import javax.annotation.concurrent.ThreadSafe;
-
 /**
- * *** INTERNAL ***
- *
- * <p> Instances of {@code BuilderDSL} can be obtained through this factory API.
+ * The root package with the <i>entry point</i> class.
  */
-@ThreadSafe
-public interface BuilderDSLFactory {
-
-    /**
-     * *** INTERNAL ***
-     *
-     * <p> Creates a {@code BuilderDSL}.
-     *
-     * @param type class object for the required type
-     * @param <T> the type of objects the builder will build
-     * @return a brand new instance of {@link BuilderDSL}
-     */
-    <T> BuilderDSL<T> create(Class<T> type);
-}
+package com.github.jakubkolar.autobuilder;

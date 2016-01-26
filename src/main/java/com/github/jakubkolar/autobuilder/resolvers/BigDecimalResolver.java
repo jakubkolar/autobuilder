@@ -35,6 +35,14 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * A special resolver for {@link BigDecimal}, and nothing else.
+ *
+ * <p> TODO AB-013: Support for more types (e.g. BigInteger)
+ *
+ * @author Jakub Kolar
+ * @since 0.0.1
+ */
 @AutoService(ValueResolver.class)
 public class BigDecimalResolver implements ValueResolver {
 

@@ -172,10 +172,11 @@ public interface ValueResolver {
      * @param name        the name of the resolved object (meaning depends on the context
      *                    in which the resolution is requested, e.g. it may be a field
      *                    name)
-     * @param annotations additional metadata hints for the resolution (content depends on
-     *                    the resolution context, e.g. it can be annotations found on a
-     *                    field)   @return the resolved instance of type {@code T},
-     *                    including {@code null} as a valid return value
+     * @param annotations additional metadata hints for the resolution (content depends
+     *                    on the resolution context, e.g. it can be annotations found on
+     *                    a field)
+     * @return the resolved instance of type {@code T}, including {@code null} as a valid
+     * return value
      * @throws UnsupportedOperationException if the instance with the given metadata
      *                                       cannot be resolved by this resolver
      */

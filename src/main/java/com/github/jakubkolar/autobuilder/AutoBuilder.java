@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * <em>AutoBuilder</em> is a magic builder library for unit tests on JVM.
  *
- * TODO:  ways of resolution: 1) Directly with a resolver or 2) Resolve as a bean with BeanResolver
+ * TODO: AB-003
  *
  */
 @Beta

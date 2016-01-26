@@ -22,28 +22,16 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.impl;
-
-import com.github.jakubkolar.autobuilder.api.BuilderDSL;
-
-import javax.annotation.concurrent.ThreadSafe;
-
 /**
- * *** INTERNAL ***
+ * <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> (special
+ * kind of API) - interfaces and classes meant to implemented/extended by third parties.
  *
- * <p> Instances of {@code BuilderDSL} can be obtained through this factory API.
+ * <p> <i>Note on backward compatibility</i>: Interfaces from this package are
+ * meant to be implemented outside of the {@code AutoBuilder} library, and as such they
+ * are subject to <i>strict</i> forward compatibility restrictions. More specifically,
+ * in future versions these interfaces can only:
+ * <ul>
+ *     <li>introduce new methods with default implementation</li>
+ * </ul>
  */
-@ThreadSafe
-public interface BuilderDSLFactory {
-
-    /**
-     * *** INTERNAL ***
-     *
-     * <p> Creates a {@code BuilderDSL}.
-     *
-     * @param type class object for the required type
-     * @param <T> the type of objects the builder will build
-     * @return a brand new instance of {@link BuilderDSL}
-     */
-    <T> BuilderDSL<T> create(Class<T> type);
-}
+package com.github.jakubkolar.autobuilder.spi;
