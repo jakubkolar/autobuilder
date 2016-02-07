@@ -62,7 +62,7 @@ public class BuiltInResolversDTO {
     EmptyEnum emptyEnumField;
 
     // Collections & maps
-    Collection<?> stringsField;
+    Collection<?> collectionField;
     List<?> listField;
     Set<?> setField;
     SortedSet<?> sortedSetField;
@@ -83,6 +83,6 @@ public class BuiltInResolversDTO {
     Comparable<String> cStrField;
     Comparable<Integer> cIntegerField;
     Comparable<NonEmptyEnum> cEnumField;
-    // TODO: Comparable<EmptyEnum> cEmptyEnumField;
+    // TODO Issue #11:: Comparable<EmptyEnum> cEmptyEnumField;
 
 }

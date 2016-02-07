@@ -64,11 +64,11 @@ class BuiltInResolversIT extends Specification {
             assert charWrapperField != null
 
             // Enum
-            // TODO: assert enumField != null
+            // TODO Issue #11: assert enumField != null
             assert emptyEnumField == null // Only valid value here
 
             // Collections & maps
-            assert stringsField != null
+            assert collectionField != null
             assert listField != null
             assert setField != null
             assert sortedSetField != null
@@ -89,7 +89,7 @@ class BuiltInResolversIT extends Specification {
             assert cStrField != null
             assert cIntegerField != null
             assert cEnumField != null
-            // TODO: assert cEmptyEnumField == null // The same as emptyEnumField
+            // TODO Issue #11: assert cEmptyEnumField == null // The same as emptyEnumField
             it
         }
     }
