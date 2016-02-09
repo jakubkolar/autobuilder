@@ -150,7 +150,7 @@ public interface BuilderDSL<T> {
      *
      * <p> It is expected that the type of the property is {@link Class#isAssignableFrom}
      * the type of the value passed in.
-     * <i>TODO AB-023: Otherwise, an {@code IllegalArgumentException} is thrown.</i>
+     * <i>TODO AB-020: Otherwise, an {@code IllegalArgumentException} is thrown.</i>
      *
      * <p> Properties registered here take precedence over properties registered globally
      * using the {@code AutoBuilder} class, over built-in resolvers, and also over any
