@@ -142,7 +142,7 @@ class GlobalAndLocalConfigurationIT extends Specification {
         assert instance.override == "Global Named Override"
     }
 
-    @SuppressWarnings(["GroovyAssignabilityCheck", "GroovyUntypedAccess"])
+    @SuppressWarnings(["GroovyAssignabilityCheck", "GroovyUntypedAccess", "GroovyPointlessArithmetic"])
     def "Value resolver is correctly invoked"() {
         given:
         def mock = Mock(ValueResolver);
