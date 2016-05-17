@@ -136,7 +136,7 @@ class SpecifyPropertiesIT extends Specification {
             // TODO: Issue #8: assert cStrField == 'cStr'
             // TODO: Issue #8: assert cIntegerField == 37
             // TODO: Issue #8: assert cEnumField == NonEmptyEnum.CONST2
-            // TODO Issue #11: assert cEmptyEnumField == null
+            // TODO: Issue #11: assert cEmptyEnumField == null
             it
         }
     }

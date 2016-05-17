@@ -66,7 +66,7 @@ class BeanResolver implements ValueResolver {
                     "annotated with %s because the actual class to be resolved cannot be " +
                     "determined at runtime (at least in a safe way that would avoid " +
                     "ClassCastException)",
-                    typeInfo.get(), name, annotations.toString(), type));
+                    typeInfo.get(), name, annotations.toString()));
         }
 
         try {
