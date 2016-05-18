@@ -138,7 +138,7 @@ import java.util.Optional;
  * <p> Registering an additional custom resolver of a given type using the {@code
  * AutoBuilder} API is described in detail in the <a href="#resolution_process">resolution
  * process</a> section. In addition to that, the JDK's {@link java.util.ServiceLoader}
- * framework can be used to load implementations of {@code ValueResolvers}. These
+ * framework can be used to load implementations of {@code ValueResolver}s. These
  * resolvers will be registered as global ones, exactly like if {@link
  * com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver(ValueResolver)} was
  * used. This way, the {@code AutoBuilder} can be enhanced by new features just by adding

@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 /**
  * TODO: Aggressive / Generic resolvers, should be executed last, given order
@@ -85,7 +87,7 @@ class BuiltInResolvers implements ValueResolver {
     private static boolean isSafeAssignable(Class<?> from, Class<?> to, Optional<Type> toTypeInfo) {
         // We may be really resolving an Object, but we may also be
         // resolving a field of type T of a generic class,
-        // for which we got to == Object.class
+        // for which we got 'to == Object.class'
         if (to.isAssignableFrom(Object.class)) {
             // If we know nothing more, then be better safe and reject to resolve
             if (!toTypeInfo.isPresent()) {
@@ -111,7 +113,7 @@ class BuiltInResolvers implements ValueResolver {
             // We only allow the resolution if typeArgument is raw type and is the same
             // as the raw type of the resolved object; that is we allow e.g. String to be
             // resolved for Comparable<String>, but not for Comparable<Integer>
-            return Objects.equals(typeArgument, from);
+            return to.isAssignableFrom(from) && Objects.equals(typeArgument, from);
         } else {
             return to.isAssignableFrom(from);
         }
@@ -119,7 +121,15 @@ class BuiltInResolvers implements ValueResolver {
 
     @Nullable
     private static <T> T stringResolver(Class<T> type, Optional<Type> typeInfo, String name) {
-        return isSafeAssignable(String.class, type, typeInfo) ? type.cast("any_" + name) : null;
+        if (isSafeAssignable(String.class, type, typeInfo)) {
+            return type.cast("any_" + name);
+        }
+        else if (isSafeAssignable(StringBuilder.class, type, typeInfo)) {
+            return type.cast(new StringBuilder("any_" + name));
+        }
+        else {
+            return null;
+        }
     }
 
     @Nullable
@@ -158,6 +168,22 @@ class BuiltInResolvers implements ValueResolver {
             return type.getEnumConstants()[0];
         }
 
+        // Maybe we are to resolve Comparable<Enum>
+        if (type.isAssignableFrom(Comparable.class)
+                && typeInfo.isPresent()
+                && typeInfo.get() instanceof ParameterizedType
+                && ((ParameterizedType) typeInfo.get()).getActualTypeArguments().length == 1) {
+
+            // What is the 'T' in Comparable<T> ?
+            Type typeArgument = ((ParameterizedType) typeInfo.get()).getActualTypeArguments()[0];
+
+            if (typeArgument instanceof Class
+                    && ((Class<?>) typeArgument).isEnum()
+                    && ((Class<?>) typeArgument).getEnumConstants().length > 0) {
+                return type.cast(((Class<?>) typeArgument).getEnumConstants()[0]);
+            }
+        }
+
         return null;
     }
 
@@ -169,8 +195,14 @@ class BuiltInResolvers implements ValueResolver {
         else if (isSafeAssignable(Set.class, type, typeInfo)) {
             return type.cast(Collections.emptySet());
         }
+        else if (isSafeAssignable(SortedSet.class, type, typeInfo)) {
+            return type.cast(Collections.emptySortedSet());
+        }
         else if (isSafeAssignable(Map.class, type, typeInfo)) {
             return type.cast(Collections.emptyMap());
+        }
+        else if (isSafeAssignable(SortedMap.class, type, typeInfo)) {
+            return type.cast(Collections.emptySortedMap());
         }
 
         return null;

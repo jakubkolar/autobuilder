@@ -84,7 +84,7 @@ public class AutoBuilder {
     }
 
     @Nullable
-    static <T> T create(Class<T> type, Map<String, Object> properties) {
+    public static <T> T create(Class<T> type, Map<String, Object> properties) {
         return instanceOf(type).with(properties).build();
     }
 

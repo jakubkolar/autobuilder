@@ -30,6 +30,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -69,12 +71,17 @@ public class GuavaResolver implements ValueResolver {
                 return type.cast(ImmutableList.of());
             } else if (type.isAssignableFrom(ImmutableSet.class)) {
                 return type.cast(ImmutableSet.of());
+            } else if (type.isAssignableFrom(ImmutableSortedSet.class)) {
+                return type.cast(ImmutableSortedSet.of());
             }
-
         }
 
-        if (Objects.equals(type, ImmutableMap.class)) {
-            return type.cast(ImmutableMap.of());
+        if (ImmutableMap.class.isAssignableFrom(type)) {
+            if (type.isAssignableFrom(ImmutableMap.class)) {
+                return type.cast(ImmutableMap.of());
+            } else if (type.isAssignableFrom(ImmutableSortedMap.class)) {
+                return type.cast(ImmutableSortedMap.of());
+            }
         }
 
         throw new UnsupportedOperationException(getClass().getSimpleName() + " cannot resolve type " + type.getSimpleName());
