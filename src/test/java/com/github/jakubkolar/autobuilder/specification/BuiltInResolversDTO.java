@@ -83,6 +83,6 @@ public class BuiltInResolversDTO {
     Comparable<String> cStrField;
     Comparable<Integer> cIntegerField;
     Comparable<NonEmptyEnum> cEnumField;
-    // TODO Issue #11:: Comparable<EmptyEnum> cEmptyEnumField;
+    Comparable<EmptyEnum> cEmptyEnumField;
 
 }
