@@ -26,6 +26,7 @@ package com.github.jakubkolar.autobuilder.impl;
 
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -59,33 +60,39 @@ class NamedResolver implements ValueResolver {
     @Nullable
     @Override
     public <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations) {
+        // If type is primitive like int.class, we must use its wrapper type
+        // because the wrapper type is used as a part of the key in the namedValues
+        // and also because int.class cannot be used in the end to 'unbox' the result
+        // (same in BuiltInResolvers.primitiveTypeResolver, you would get ClassCastException)
+        Class<T> wrappedType = Primitives.wrap(type);
+
         @SuppressWarnings("rawtypes")
-        RegisteredValue rv = namedValues.get(ImmutablePair.of(name, (Class) type));
+        RegisteredValue rv = namedValues.get(ImmutablePair.of(name, (Class) wrappedType));
 
         if (rv == null) {
             // TODO: try to lookup null, which this way applies to _any_ type
             rv = namedValues.get(ImmutablePair.of(name, (Class)null));
             if (rv == null) {
                 throw new UnsupportedOperationException(String.format(
-                        "There is no registered named value with name %s and type %s", name, type.getSimpleName()));
+                    "There is no registered named value with name %s and type %s", name, type.getSimpleName()));
             }
         }
 
         for (Annotation requiredAnnotation : rv.annotations) {
             if (!annotations.contains(requiredAnnotation)) {
                 throw new UnsupportedOperationException(String.format(
-                        "The named value with name %s and type %s requires annotations %s, " +
-                                "but only these annotations were present: %s",
-                        name, type.getSimpleName(), requiredAnnotation, annotations));
+                    "The named value with name %s and type %s requires annotations %s, " +
+                    "but only these annotations were present: %s",
+                    name, type.getSimpleName(), requiredAnnotation, annotations));
             }
         }
 
         try {
-            return type.cast(rv.value);
+            return wrappedType.cast(rv.value);
         } catch (ClassCastException e) {
             throw new UnsupportedOperationException(String.format(
-                    "Named value %s cannot be converted to the required type %s because of: %s",
-                    name, type.getSimpleName(), e.getMessage()), e);
+                "Named value %s cannot be converted to the required type %s because of: %s",
+                name, type.getSimpleName(), e.getMessage()), e);
         }
     }
 

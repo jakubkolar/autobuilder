@@ -99,13 +99,13 @@ class SpecifyPropertiesIT extends Specification {
 
             assert strBuilderField.is(sb)
         // Primitives
-            // TODO Issue #9: assert byteField == 0xFF as byte
-            // TODO Issue #9: assert shortField == 0 as short
-            // TODO Issue #9: assert intField == 1
-            // TODO Issue #9: assert longField == 2L
-            // TODO Issue #9: assert floatField == 2.71828f
-            // TODO Issue #9: assert doubleField == 3.14159d
-            // TODO Issue #9: assert charField == 'c' as char
+            assert byteField == 0xFF as byte
+            assert shortField == 0 as short
+            assert intField == 1
+            assert longField == 2L
+            assert floatField == 2.71828f
+            assert doubleField == 3.14159d
+            assert charField == 'c' as char
         // Wrappers
             assert byteWrapperField == 0xFF as Byte
             assert shortWrapperField == 0 as Short
