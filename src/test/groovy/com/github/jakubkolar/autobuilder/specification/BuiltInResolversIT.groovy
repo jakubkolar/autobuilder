@@ -89,7 +89,6 @@ class BuiltInResolversIT extends Specification {
             assert cStrField != null
             assert cIntegerField != null
             assert cEnumField != null
-            assert cEmptyEnumField == null // The same as emptyEnumField
             it
         }
     }

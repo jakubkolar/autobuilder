@@ -73,11 +73,11 @@ class BuiltInResolvers implements ValueResolver {
     @SafeVarargs
     private static <T> T resolveWith(Class<T> type, Optional<Type> typeInfo, String name, ResolveFunc<T>... functions) {
         for (ResolveFunc<T> resolver : functions) {
-            T result = resolver.apply(type, typeInfo, name);
-
-            // For Enums with no constants we accept null as the only valid value
-            if (result != null || type.isEnum()) {
-                return result;
+            try {
+                return resolver.apply(type, typeInfo, name);
+            }
+            catch (UnsupportedOperationException ignored) {
+                // Try next resolver
             }
         }
 
@@ -128,7 +128,7 @@ class BuiltInResolvers implements ValueResolver {
             return type.cast(new StringBuilder("any_" + name));
         }
         else {
-            return null;
+            throw new UnsupportedOperationException("Cannot resolve type " + type.getSimpleName());
         }
     }
 
@@ -159,13 +159,13 @@ class BuiltInResolvers implements ValueResolver {
             return Primitives.wrap(type).cast(Character.MIN_VALUE);
         }
 
-        return null;
+        throw new UnsupportedOperationException("Cannot resolve type " + type.getSimpleName());
     }
 
     @Nullable
     private static <T> T enumResolver(Class<T> type, Optional<Type> typeInfo, String name) {
-        if (type.isEnum() && type.getEnumConstants().length > 0) {
-            return type.getEnumConstants()[0];
+        if (type.isEnum()) {
+            return type.getEnumConstants().length > 0 ? type.getEnumConstants()[0] : null;
         }
 
         // Maybe we are to resolve Comparable<Enum>
@@ -177,6 +177,8 @@ class BuiltInResolvers implements ValueResolver {
             // What is the 'T' in Comparable<T> ?
             Type typeArgument = ((ParameterizedType) typeInfo.get()).getActualTypeArguments()[0];
 
+            // If 'T' is an Enum, we require it to have at least one constant otherwise we would
+            // have to resolve it as 'null', which is not a good choice for Comparable
             if (typeArgument instanceof Class
                     && ((Class<?>) typeArgument).isEnum()
                     && ((Class<?>) typeArgument).getEnumConstants().length > 0) {
@@ -184,7 +186,7 @@ class BuiltInResolvers implements ValueResolver {
             }
         }
 
-        return null;
+        throw new UnsupportedOperationException("Cannot resolve type " + type.getSimpleName());
     }
 
     @Nullable
@@ -205,7 +207,7 @@ class BuiltInResolvers implements ValueResolver {
             return type.cast(Collections.emptySortedMap());
         }
 
-        return null;
+        throw new UnsupportedOperationException("Cannot resolve type " + type.getSimpleName());
     }
 
     @Nullable
@@ -214,6 +216,6 @@ class BuiltInResolvers implements ValueResolver {
             return type.cast(Array.newInstance(type.getComponentType(), 0));
         }
 
-        return null;
+        throw new UnsupportedOperationException("Cannot resolve type " + type.getSimpleName());
     }
 }

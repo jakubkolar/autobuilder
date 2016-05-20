@@ -83,6 +83,10 @@ public class BuiltInResolversDTO {
     Comparable<String> cStrField;
     Comparable<Integer> cIntegerField;
     Comparable<NonEmptyEnum> cEnumField;
-    Comparable<EmptyEnum> cEmptyEnumField;
+
+    // This actually should not be resolved: the only possible value would be 'null' because
+    // EmptyEnum has no constants. But 'null' is not a good choice for Comparable, it is better
+    // to only allow it for just EmptyEnum instances and nothing else
+    //Comparable<EmptyEnum> cEmptyEnumField;
 
 }
