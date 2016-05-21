@@ -11,10 +11,10 @@ AutoBuilder
 Current release
 ---------------
 
-The most recent version is [0.1.0-alpha](https://github.com/jakubkolar/autobuilder/releases/tag/v0.1.0-alpha),
-released on January 26, 2016.
+The most recent version is [0.1.1-alpha](https://github.com/jakubkolar/autobuilder/releases/tag/v0.1.1-alpha),
+released May 21, 2016.
 
-See the [API documentation](http://www.javadoc.io/doc/com.github.jakubkolar/autobuilder/0.1.0-alpha).
+See the [API documentation](http://www.javadoc.io/doc/com.github.jakubkolar/autobuilder/0.1.1-alpha).
 
 To add a dependency on AutoBuilder using Maven, use the following:
 
@@ -22,6 +22,6 @@ To add a dependency on AutoBuilder using Maven, use the following:
 <dependency>
     <groupId>com.github.jakubkolar</groupId>
     <artifactId>autobuilder</artifactId>
-    <version>0.1.0-alpha</version>
+    <version>0.1.1-alpha</version>
 </dependency>
 ```
