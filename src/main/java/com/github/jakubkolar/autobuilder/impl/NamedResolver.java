@@ -78,7 +78,7 @@ class NamedResolver implements ValueResolver {
             }
         }
 
-        for (Annotation requiredAnnotation : rv.annotations) {
+        for (Annotation requiredAnnotation : rv.getAnnotations()) {
             if (!annotations.contains(requiredAnnotation)) {
                 throw new UnsupportedOperationException(String.format(
                     "The named value with name %s and type %s requires annotations %s, " +
@@ -88,7 +88,7 @@ class NamedResolver implements ValueResolver {
         }
 
         try {
-            return wrappedType.cast(rv.value);
+            return wrappedType.cast(rv.getValue());
         } catch (ClassCastException e) {
             throw new UnsupportedOperationException(String.format(
                 "Named value %s cannot be converted to the required type %s because of: %s",
@@ -118,12 +118,21 @@ class NamedResolver implements ValueResolver {
 
     private static class RegisteredValue {
         @Nullable
-        Object value;
-        Collection<Annotation> annotations;
+        private final Object value;
+        private final Collection<Annotation> annotations;
 
         RegisteredValue(@Nullable Object value, Collection<Annotation> annotations) {
             this.value = value;
             this.annotations = annotations;
+        }
+
+        @Nullable
+        public Object getValue() {
+            return value;
+        }
+
+        public Collection<Annotation> getAnnotations() {
+            return annotations;
         }
 
         @Override

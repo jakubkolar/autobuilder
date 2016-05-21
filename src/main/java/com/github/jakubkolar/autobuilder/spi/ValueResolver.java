@@ -31,7 +31,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -90,8 +89,8 @@ import java.util.Optional;
  * plain value-based overrides without the need to implement a full {@code ValueResolver}.
  * To contribute to these named values, use {@link
  * com.github.jakubkolar.autobuilder.api.BuilderDSL#with(String, Object)}, or {@link
- * com.github.jakubkolar.autobuilder.api.BuilderDSL#with(Map)} (local part), and {@link
- * com.github.jakubkolar.autobuilder.AutoBuilder#registerValue(String, Object,
+ * com.github.jakubkolar.autobuilder.api.BuilderDSL#with(java.util.Map)} (local part), and
+ * {@link com.github.jakubkolar.autobuilder.AutoBuilder#registerValue(String, Object,
  * Annotation...)} (global part). After these named values, in each (local and global)
  * sub-chain, custom user registered resolvers are tried in a LIFO manner (last
  * registered resolver is tried first).

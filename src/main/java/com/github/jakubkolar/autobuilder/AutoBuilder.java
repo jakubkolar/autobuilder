@@ -48,6 +48,9 @@ import java.util.Set;
 @Beta
 public class AutoBuilder {
 
+    private static final BuilderDSLFactory factory;
+    private static final ResolversRegistry registry;
+
     private AutoBuilder() { }
 
     @Singleton
@@ -57,9 +60,6 @@ public class AutoBuilder {
         ResolversRegistry getRegistry();
         Set<Initializable> getInitBeans();
     }
-
-    private static final BuilderDSLFactory factory;
-    private static final ResolversRegistry registry;
 
     static {
         // We use Dagger under the hood to wire things up, but we keep that as an impl. detail for now
