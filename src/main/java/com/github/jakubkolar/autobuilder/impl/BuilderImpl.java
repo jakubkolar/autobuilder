@@ -89,7 +89,7 @@ class BuilderImpl<T> implements BuilderDSL<T> {
         // TODO: this can be optimized
         BuilderDSL<T> result = this;
         for (Entry<String, Object> prop : properties.entrySet()) {
-            result = with(prop.getKey(), prop.getValue());
+            result = result.with(prop.getKey(), prop.getValue());
         }
         return result;
     }
