@@ -148,8 +148,8 @@ class SpecifyPropertiesIT extends Specification {
                 .build()
 
         then:
-        // TODO Issue #7: assert instance.strField == 'ABC'
-        // TODO Issue #7: assert instance.intField == 1
+        assert instance.strField == 'ABC'
+        assert instance.intField == 1
         assert instance.primitiveArrayField == ['x', 'y'] as char[]
     }
 
@@ -159,7 +159,7 @@ class SpecifyPropertiesIT extends Specification {
             def instance = BuiltInResolversDTO.class.create(intField: 1, strField: 'ABC')
 
             then:
-            // TODO Issue #7: assert instance.intField == 1
+            assert instance.intField == 1
             assert instance.strField == 'ABC'
         }
     }
