@@ -24,6 +24,7 @@
 
 package com.github.jakubkolar.autobuilder.specification;
 
-public class ExampleNested {
-    String nestedStrField;
+public class SpecificTypeDTO {
+    SpecificType specificTypeField1;
+    SpecificType specificTypeField2;
 }

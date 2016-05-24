@@ -208,6 +208,23 @@ public interface BuilderDSL<T> {
     BuilderDSL<T> with(ValueResolver userResolver);
 
     /**
+     * Uses a given {@code value} when resolving the given {@code type}.
+     *
+     * <p> This method is just a convenience shortcut for adding a {@code ValueResolver}
+     * that resolves the corresponding {@code type}. The resulting builder keeps all the
+     * {@code ValueResolver}s registered with the previous builder (if any), plus this new
+     * {@code ValueResolver}, which takes precedence over the other resolvers and also
+     * over any global or built-in resolvers.
+     *
+     * @param type  the class object for the type to be resolved
+     * @param value the actual value to be used, including {@code null}
+     * @param <R>   the type to be resolved
+     *
+     * @return a new {@code BuilderDSL<T>} with the requested modification(s)
+     */
+    <R> BuilderDSL<T> with(Class<R> type, @Nullable R value);
+
+    /**
      * Builds an instance of {@code T} based on configuration of this builder.
      *
      * <p> The configuration is comprised of all the registered properties, {@code
