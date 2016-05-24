@@ -149,7 +149,7 @@ import java.util.Optional;
  * @author Jakub Kolar
  * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(ValueResolver)
  * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(String, Object)
- * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(Map)
+ * @see com.github.jakubkolar.autobuilder.api.BuilderDSL#with(java.util.Map)
  * @see com.github.jakubkolar.autobuilder.AutoBuilder#registerResolver(ValueResolver)
  * @see com.github.jakubkolar.autobuilder.AutoBuilder#registerValue(String, Object, Annotation...)
  * @since 0.0.1

@@ -103,9 +103,15 @@ class BuilderImpl<T> implements BuilderDSL<T> {
                 factory);
     }
 
+    @Override
+    public <R> BuilderDSL<T> with(Class<R> type, @Nullable R value) {
+        return with(new ExactTypeConstantResolver<>(type, value));
+    }
+
     @Nullable
     @Override
     public T build() {
         return rootResolver.resolve(type, Optional.empty(), type.getSimpleName(), Arrays.asList(type.getAnnotations()));
     }
+
 }
