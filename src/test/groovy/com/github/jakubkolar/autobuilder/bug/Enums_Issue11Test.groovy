@@ -3,7 +3,6 @@ package com.github.jakubkolar.autobuilder.bug
 import com.github.jakubkolar.autobuilder.AutoBuilder
 import spock.lang.Specification
 
-
 class Enums_Issue11Test extends Specification {
 
     def "AutoBuilder does not resolve enums"() {
