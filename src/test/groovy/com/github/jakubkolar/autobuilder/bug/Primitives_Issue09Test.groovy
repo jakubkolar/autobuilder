@@ -4,7 +4,6 @@ import com.github.jakubkolar.autobuilder.AutoBuilder
 import com.github.jakubkolar.autobuilder.specification.ImmutabilityExampleDTO
 import spock.lang.Specification
 
-
 class Primitives_Issue09Test extends Specification {
 
     def setupSpec() {
@@ -27,6 +26,14 @@ class Primitives_Issue09Test extends Specification {
         def instance = AutoBuilder.instanceOf(PrimitiveFields)
                 .with(i: 123)
                 .build()
+
+        then:
+        assert instance.i == 123
+    }
+
+    def "AutoBuilder.create(Class, Map) does not work for properties of primitive types"() {
+        when:
+        def instance = AutoBuilder.create(PrimitiveFields, [i: 123])
 
         then:
         assert instance.i == 123

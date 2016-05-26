@@ -95,7 +95,7 @@ class SpecifyPropertiesIT extends Specification {
         instance.with {
         // Strings
             assert strField == 'Str'
-            // TODO: Issue #8: assert charSequenceField == 'ChSeq'
+            assert charSequenceField == 'ChSeq'
 
             assert strBuilderField.is(sb)
         // Primitives
@@ -118,25 +118,24 @@ class SpecifyPropertiesIT extends Specification {
             assert enumField == NonEmptyEnum.CONST1
             assert emptyEnumField == null
         // Collections & maps
-            // TODO: Issue #8: assert collectionField == ['A', 'B']
-            // TODO: Issue #8: assert listField == ['A', 'B']
-            // TODO: Issue #8: assert setField == [1, 2].toSet()
-            // TODO: Issue #8: assert sortedSetField == [1, 2] as TreeSet
-            // TODO: Issue #8: assert mapField == [a: 1, b: 2]
-            // TODO: Issue #8: assert sortedMapField == [a: 1, b: 2] as TreeMap
+            assert collectionField == ['A', 'B']
+            assert listField == ['A', 'B']
+            assert setField == [1, 2].toSet()
+            assert sortedSetField == [1, 2] as TreeSet
+            assert mapField == [a: 1, b: 2]
+            assert sortedMapField == [a: 1, b: 2] as TreeMap
         // Arrays
             assert objArrayField == [1, 'A'] as Object[]
             assert objArrayField2 == ['a', 'b'] as Character[]
             assert primitiveArrayField == ['c', 'd'] as char[]
         // Special
             assert objectField.is(obj)
-            // TODO: Issue #8: assert numberField == BigDecimal.valueOf(999)
-            // TODO: Issue #8: assert serializableField == BigInteger.valueOf(123)
+            assert numberField == BigDecimal.valueOf(999)
+            assert serializableField == BigInteger.valueOf(123)
         // Comparables
-            // TODO: Issue #8: assert cStrField == 'cStr'
-            // TODO: Issue #8: assert cIntegerField == 37
-            // TODO: Issue #8: assert cEnumField == NonEmptyEnum.CONST2
-            // TODO: Issue #11: assert cEmptyEnumField == null
+            assert cStrField == 'cStr'
+            assert cIntegerField == 37
+            assert cEnumField == NonEmptyEnum.CONST2
             it
         }
     }

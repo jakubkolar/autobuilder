@@ -37,10 +37,25 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 class NamedResolver implements ValueResolver {
+
+    /*
+     * TODO AB-020:
+     * global named resolvers register values under their name and type, that  is you can
+     * register more resolvers for different types under the same name... this is probably
+     * confusing for a local resolver within a builder instance, because each name (field)
+     * has unique type, but if you accidentally register a value of a wrong type, it will
+     * not be found and you won't get any error... instead it should refuse the
+     * registration with "wrong type for field"
+     *
+     * Followup:
+     * The concept of AutoBuilder.registerValue(name, value) should be revisited...
+     * as it is implemented now it requires a class name and then a path in the obj.
+     * graph separated by dots. From this I do not see why would someone register the
+     * same name with different types, that would only be confusing.
+     */
 
     @SuppressWarnings("rawtypes")
     private final ImmutableMap<ImmutablePair<String, Class>, RegisteredValue> namedValues;
@@ -97,23 +112,35 @@ class NamedResolver implements ValueResolver {
     }
 
     public NamedResolver add(String name, @Nullable Object value, Collection<Annotation> requiredAnnotations) {
-        return new NamedResolver(namedValues,
-                // TODO: this may be a problem since for null there is no Class, so how to look it up?
-                ImmutablePair.of(name, value != null ? value.getClass() : null),
+        if (value == null) {
+            // TODO: this may be a problem since for null there is no Class, so how to look it up?
+            return new NamedResolver(namedValues,
+                    ImmutablePair.of(name, null), new RegisteredValue(null, requiredAnnotations));
+        } else {
+            return contributeValue(name, value.getClass(), value, requiredAnnotations);
+        }
+    }
+
+    private NamedResolver contributeValue(String name, @Nullable Class<?> type, Object value, Collection<Annotation> requiredAnnotations) {
+        if (type == null || namedValues.containsKey(ImmutablePair.of(name, (Class)type))) {
+            return this;
+        }
+
+        NamedResolver result = new NamedResolver(namedValues,
+                ImmutablePair.of(name, type),
                 new RegisteredValue(value, requiredAnnotations));
+
+        result = result.contributeValue(name, type.getSuperclass(), value, requiredAnnotations);
+
+        for (Class<?> iface : type.getInterfaces()) {
+            result = result.contributeValue(name, iface, value, requiredAnnotations);
+        }
+
+        return result;
     }
 
     public NamedResolver add(String name, @Nullable Object value, Annotation... requiredAnnotations) {
         return add(name, value, Arrays.asList(requiredAnnotations));
-    }
-
-    public NamedResolver addAll(Map<String, Object> addedValues) {
-        // TODO: this can be optimized
-        NamedResolver result = this;
-        for (Entry<String, Object> entry : addedValues.entrySet()) {
-            result = add(entry.getKey(), entry.getValue());
-        }
-        return result;
     }
 
     private static class RegisteredValue {
