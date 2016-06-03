@@ -22,49 +22,29 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions;
+package com.github.jakubkolar.autobuilder.extensions
 
-import groovy.lang.GroovyObjectSupport;
+import nl.jqno.equalsverifier.EqualsVerifier
+import spock.lang.Specification
 
-import java.util.Objects;
+@Newify(Variable)
+class VariableTest extends Specification {
 
-final class Variable extends GroovyObjectSupport {
-
-    private final String name;
-
-    public Variable(String name) {
-        this.name = name;
+    def "It is a value object"() {
+        expect:
+        EqualsVerifier.forClass(Variable).verify()
     }
 
-    public String getName() {
-        return name;
+    def "It allows to resolve nested properties as new variables"() {
+        given:
+        def x = Variable('x')
+
+        when:
+        def nested = x.y.z as Variable
+
+        then:
+        assert nested == new Variable('x.y.z')
+        assert nested.getName() == 'x.y.z'
     }
 
-    @Override
-    public Object getProperty(String property) {
-        // TODO: document - "to resolve nested properties"
-        return new Variable(name + '.' + property);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Variable other = (Variable) obj;
-        return Objects.equals(this.name, other.name);
-    }
-
-    @Override
-    public String toString() {
-        return "Variable[" + name + ']';
-    }
 }

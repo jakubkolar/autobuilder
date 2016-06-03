@@ -83,6 +83,16 @@ class GroovyExtensionsIT extends Specification {
         assert actual == expected
     }
 
+    def "Create an empty collection from an empty table"() {
+        when:
+        def users = a(User).of {
+            login | email
+        }
+
+        then:
+        assert users.empty
+    }
+
     def "Create a collection from a table with nested properties"() {
         given:
         def today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)

@@ -43,6 +43,13 @@ class Table {
     }
 
     public static Table of(List<TableRow> rows) {
+        if (rows.isEmpty()) {
+            throw new IllegalArgumentException("No rows defined: every table must have"
+                + " at least 1 row (the header). Also please check that your table"
+                + " has at least 2 columns separated by the '|' operator (technical "
+                + "restriction)");
+        }
+
         Table table = new Table(rows.get(0));
 
         for (int i = 1; i < rows.size(); i++) {

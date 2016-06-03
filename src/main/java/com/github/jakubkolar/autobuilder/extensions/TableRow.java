@@ -59,7 +59,9 @@ class TableRow {
         for (int i = 0; i < data.size(); i++) {
             Object element = data.get(i);
             if (!(element instanceof Variable)) {
-                throw new IllegalStateException("Not a header");
+                throw new IllegalStateException("Not a header: element '" + element
+                        + "' in row '" + this + "' is not a variable"
+                        + " (all elements in a header row must be variables)");
             }
 
             result.put(((Variable) element).getName(), i);
@@ -70,25 +72,17 @@ class TableRow {
 
     public Map<String, Object> toProperties(Map<String, Integer> header) {
         Map<String, Object> result = new HashMap<>();
-        header.forEach((property, index) -> result.put(property, data.get(index)));
+        header.forEach((property, index) -> {
+            if (index < 0 || index >= data.size()) {
+                throw new IllegalStateException(
+                    "Malformed table: cannot retrieve property '" + property
+                    + "' at column '" + index + "' from row '" + this + "', "
+                    + "the column does not exist in the row");
+            }
+            Object value = data.get(index);
+            result.put(property, value);
+        });
         return result;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        TableRow other = (TableRow) obj;
-        return Objects.equals(this.data, other.data);
     }
 
     @Override

@@ -48,7 +48,7 @@ class TableCategory {
         tableData.setDelegate(new VariableResolvingDelegate());
 
         // If tableData.call() happens to call this method again, our global variable 'collectedRows'
-        // gets all messed up - TODO: may a stack push/pop mechanism should be introduced
+        // gets all messed up - TODO: maybe a stack push/pop mechanism should be introduced
         GroovyCategorySupport.use(TableCategory.class, tableData);
 
         return Table.of(collectedRows.get());
