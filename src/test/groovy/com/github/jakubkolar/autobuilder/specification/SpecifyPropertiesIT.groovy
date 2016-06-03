@@ -27,6 +27,9 @@ package com.github.jakubkolar.autobuilder.specification
 import com.github.jakubkolar.autobuilder.AutoBuilder
 import spock.lang.Specification
 
+import static com.github.jakubkolar.autobuilder.AutoBuilder.a
+import static com.github.jakubkolar.autobuilder.AutoBuilder.an
+
 class SpecifyPropertiesIT extends Specification {
 
     def "Specify a single property"() {
@@ -37,6 +40,20 @@ class SpecifyPropertiesIT extends Specification {
 
         then:
         assert instance.strField == "Custom Value"
+    }
+
+    def "Specify a single property - DSL variants"() {
+        when:
+        def instance1 = a(BuiltInResolversDTO)
+                .with("strField", "Custom Value")
+                .build()
+        def instance2 = an(BuiltInResolversDTO)
+                .with("strField", "Custom Value")
+                .build()
+
+        then:
+        assert instance1.strField == "Custom Value"
+        assert instance2.strField == "Custom Value"
     }
 
     def "Specify multiple properties"() {
@@ -150,17 +167,6 @@ class SpecifyPropertiesIT extends Specification {
         assert instance.strField == 'ABC'
         assert instance.intField == 1
         assert instance.primitiveArrayField == ['x', 'y'] as char[]
-    }
-
-    def "Create the object directly"() {
-         use(AutoBuilder) {
-            when:
-            def instance = BuiltInResolversDTO.class.create(intField: 1, strField: 'ABC')
-
-            then:
-            assert instance.intField == 1
-            assert instance.strField == 'ABC'
-        }
     }
 
     def "Specify nested properties using the dot notation"() {

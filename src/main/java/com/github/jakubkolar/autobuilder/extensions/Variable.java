@@ -22,31 +22,49 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
+package com.github.jakubkolar.autobuilder.extensions;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
+import groovy.lang.GroovyObjectSupport;
 
-import java.math.BigDecimal;
+import java.util.Objects;
 
-public class ExtensionExampleDTO {
+class Variable extends GroovyObjectSupport {
 
-    // BigDecimalResolver
-    BigDecimal decimalField;
+    private final String name;
 
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
+    public Variable(String name) {
+        this.name = name;
+    }
 
-    @Incubating
-    String extensionTestResolverField;
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Object getProperty(String property) {
+        // TODO: document - "to resolve nested properties"
+        return new Variable(name + '.' + property);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Variable other = (Variable) obj;
+        return Objects.equals(this.name, other.name);
+    }
+
+    @Override
+    public String toString() {
+        return "Variable[" + name + ']';
+    }
 }

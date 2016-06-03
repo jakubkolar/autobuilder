@@ -22,32 +22,49 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
+package com.github.jakubkolar.autobuilder.extensions;
 
-import com.github.jakubkolar.autobuilder.spi.ValueResolver;
-import org.mockito.Incubating;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.annotation.Nullable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
-/**
- * A special resolver created only for testing the library extension feature.
- */
-public class ExtensionTestResolver implements ValueResolver {
+class Table {
 
-    @Nullable
-    @Override
-    public <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof Incubating) {
-                return type.cast("Custom Value For @Incubating Field");
-            }
-        }
+    private final Map<String, Integer> header;
+    private final List<TableRow> rows;
 
-        throw new UnsupportedOperationException(getClass().getSimpleName() + " cannot resolve type " + type.getSimpleName());
+    private Table(TableRow headerRow) {
+        this.header = headerRow.toHeader();
+        this.rows = new ArrayList<>();
     }
 
+    public static Table of(List<TableRow> rows) {
+        Table table = new Table(rows.get(0));
+
+        for (int i = 1; i < rows.size(); i++) {
+            table.add(rows.get(i));
+        }
+
+        return table;
+    }
+
+    public void add(TableRow row) {
+        rows.add(row);
+    }
+
+    public Stream<Map<String, Object>> stream() {
+        return rows.stream().map(row -> row.toProperties(header));
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("header", header.keySet())
+                .append("rows", rows)
+                .toString();
+    }
 }

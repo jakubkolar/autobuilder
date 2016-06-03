@@ -22,31 +22,38 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
+package com.github.jakubkolar.autobuilder.extensions;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
+import com.github.jakubkolar.autobuilder.api.BuilderDSL;
+import com.google.common.annotations.Beta;
+import groovy.lang.Closure;
 
-import java.math.BigDecimal;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public class ExtensionExampleDTO {
+/**
+ * TODO
+ *
+ * @since 0.2
+ */
+@Beta
+public class BuilderDSLGroovyMethods {
 
-    // BigDecimalResolver
-    BigDecimal decimalField;
+    private BuilderDSLGroovyMethods() {
+        // Groovy extension module - static methods only
+    }
 
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
+    @Nullable
+    public static <T> T of(BuilderDSL<T> self, Map<String, Object> properties) {
+        return self.with(properties).build();
+    }
 
-    @Incubating
-    String extensionTestResolverField;
+    public static <T> List<T> of(BuilderDSL<T> self, Closure<?> tableData) {
+        return TableCategory.parseTable(tableData).stream()
+                .map(props -> of(self, props))
+                .collect(Collectors.toList());
+    }
+
 }

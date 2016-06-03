@@ -100,15 +100,15 @@ class Supertypes_Issue08Test extends Specification {
         def myList = ['ABC', 'DEF'] as LinkedList<String>
 
         when:
-        def instance = AutoBuilder.create(SupertypeFields, [
+        def instance = AutoBuilder.instanceOf(SupertypeFields).with(
                 abstractListField: myList,
                 abstractCollectionField: myList,
                 objectField: myList,
                 listField: myList,
                 cloneableField: myList,
                 queueField: myList,
-                iterableField: myList
-        ])
+                iterableField: myList,
+        ).build()
 
         then:
         instance.with {

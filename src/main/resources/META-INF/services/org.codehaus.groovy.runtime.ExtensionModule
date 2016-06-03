@@ -1,0 +1,3 @@
+moduleName=autobuilder-module
+moduleVersion=${version}
+extensionClasses=com.github.jakubkolar.autobuilder.extensions.BuilderDSLGroovyMethods

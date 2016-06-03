@@ -221,6 +221,7 @@ public interface BuilderDSL<T> {
      * @param <R>   the type to be resolved
      *
      * @return a new {@code BuilderDSL<T>} with the requested modification(s)
+     * @since 0.2
      */
     <R> BuilderDSL<T> with(Class<R> type, @Nullable R value);
 

@@ -33,10 +33,8 @@ import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.annotations.Beta;
 import dagger.Component;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,6 +42,7 @@ import java.util.Set;
  *
  * TODO: AB-003
  *
+ * @since 0.0.1
  */
 @Beta
 public class AutoBuilder {
@@ -83,9 +82,22 @@ public class AutoBuilder {
         return factory.create(type);
     }
 
-    @Nullable
-    public static <T> T create(Class<T> type, Map<String, Object> properties) {
-        return instanceOf(type).with(properties).build();
+    /**
+     * TODO
+     *
+     * @since 0.2
+     */
+    public static <T> BuilderDSL<T> a(Class<T> type) {
+        return factory.create(type);
+    }
+
+    /**
+     * TODO
+     *
+     * @since 0.2
+     */
+    public static <T> BuilderDSL<T> an(Class<T> type) {
+        return factory.create(type);
     }
 
 }
