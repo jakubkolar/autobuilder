@@ -27,7 +27,6 @@ package com.github.jakubkolar.autobuilder.extensions
 import nl.jqno.equalsverifier.EqualsVerifier
 import spock.lang.Specification
 
-@Newify(Variable)
 class VariableTest extends Specification {
 
     def "It is a value object"() {
@@ -37,7 +36,7 @@ class VariableTest extends Specification {
 
     def "It allows to resolve nested properties as new variables"() {
         given:
-        def x = Variable('x')
+        def x = new Variable('x')
 
         when:
         def nested = x.y.z as Variable

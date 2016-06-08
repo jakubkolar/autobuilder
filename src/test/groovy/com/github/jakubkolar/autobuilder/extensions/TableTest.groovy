@@ -22,55 +22,44 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions;
+package com.github.jakubkolar.autobuilder.extensions
 
-import groovy.lang.GroovyObjectSupport;
+import spock.lang.Specification
 
-import java.util.Objects;
+import java.util.stream.Collectors
 
-final class Variable extends GroovyObjectSupport {
+@Newify(Variable)
+class TableTest extends Specification {
 
-    private final String name;
+    def "It provides a readable to-string for debugging"() {
+        given:
+        def header = TableRow.of(Variable('a'), Variable('b'))
+        def row1 = TableRow.of(1, 2)
+        def row2 = TableRow.of(3, 4)
 
-    public Variable(String name) {
-        this.name = name;
+        when:
+        def table = Table.of([header, row1, row2])
+
+        then:
+        assert table.toString() ==
+                "Table[header=[a, b],rows=[TableRow[1, 2], TableRow[3, 4]]]"
     }
 
-    public String getName() {
-        return name;
+    def "It maps the rows to property values using the header"() {
+        given:
+        def header = TableRow.of(Variable('a'), Variable('b'))
+        def row1 = TableRow.of(1, 2)
+        def row2 = TableRow.of(3, 4)
+        def table = Table.of([header, row1, row2])
+
+        when:
+        def contents = table.stream().collect(Collectors.toList())
+
+        then:
+        assert contents == [
+                [a: 1, b: 2],
+                [a: 3, b: 4],
+        ]
     }
 
-    @Override
-    public Object getProperty(String property) {
-        // TODO: document - "to resolve nested properties"
-        return new Variable(name + '.' + property);
-    }
-
-    @Override
-    public void setProperty(String property, Object newValue) {
-        // TODO: when is it called?
-        TableDSL.setProperty(name + '.' + property, newValue);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Variable other = (Variable) obj;
-        return Objects.equals(this.name, other.name);
-    }
-
-    @Override
-    public String toString() {
-        return "Variable[" + name + ']';
-    }
 }

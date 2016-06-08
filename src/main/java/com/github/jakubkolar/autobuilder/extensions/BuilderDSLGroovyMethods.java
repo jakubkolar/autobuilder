@@ -24,14 +24,13 @@
 
 package com.github.jakubkolar.autobuilder.extensions;
 
+import com.github.jakubkolar.autobuilder.AutoBuilder;
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 import com.google.common.annotations.Beta;
 import groovy.lang.Closure;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * TODO
@@ -46,14 +45,20 @@ public class BuilderDSLGroovyMethods {
     }
 
     @Nullable
-    public static <T> T of(BuilderDSL<T> self, Map<String, Object> properties) {
-        return self.with(properties).build();
+    public static <T> T of(Class<T> self, Closure<?> instanceData) {
+        return TableDSL.parseSingle(AutoBuilder.instanceOf(self), instanceData);
     }
 
-    public static <T> List<T> of(BuilderDSL<T> self, Closure<?> tableData) {
-        return TableCategory.parseTable(tableData).stream()
-                .map(props -> of(self, props))
-                .collect(Collectors.toList());
+    public static <T> List<T> fromTable(Class<T> self, Closure<?> tableData) {
+        return fromTable(AutoBuilder.instanceOf(self), tableData);
+    }
+
+    public static <T> List<T> fromTable(BuilderDSL<T> self, Closure<?> tableData) {
+        return TableDSL.parseTable(self, tableData);
+    }
+
+    public static <T, U> U asType(BuilderDSL<T> self, Class<U> target) {
+        return target.cast(self.build());
     }
 
 }

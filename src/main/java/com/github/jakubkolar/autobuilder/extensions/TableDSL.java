@@ -24,34 +24,30 @@
 
 package com.github.jakubkolar.autobuilder.extensions;
 
+import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 import org.codehaus.groovy.runtime.GroovyCategorySupport;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-class TableCategory {
+@SuppressWarnings("OverloadedMethodsWithSameNumberOfParameters")
+class TableDSL {
 
-    private static final ThreadLocal<List<TableRow>> collectedRows = new ThreadLocal<>();
+    private static final ThreadLocal<Context<?>> context = new ThreadLocal<>();
 
-    private TableCategory() {
-        // Groovy category - static methods only
+    @Nullable
+    public static <T> T parseSingle(BuilderDSL<T> builder, Closure<?> tableData) {
+        return parse(builder, tableData, Context::buildSingle);
     }
 
-    public static Table parseTable(Closure<?> tableData) {
-        // Set-up a new context
-        collectedRows.set(new ArrayList<>());
-
-        tableData.setResolveStrategy(Closure.DELEGATE_FIRST);
-        tableData.setDelegate(new VariableResolvingDelegate());
-
-        // If tableData.call() happens to call this method again, our global variable 'collectedRows'
-        // gets all messed up - TODO: maybe a stack push/pop mechanism should be introduced
-        GroovyCategorySupport.use(TableCategory.class, tableData);
-
-        return Table.of(collectedRows.get());
+    public static <T> List<T> parseTable(BuilderDSL<T> builder, Closure<?> tableData) {
+        return parse(builder, tableData, Context::buildMany);
     }
 
     /**
@@ -59,7 +55,7 @@ class TableCategory {
      */
     public static TableRow or(Object self, Object argument) {
         TableRow newRow = TableRow.of(self, argument);
-        collectedRows.get().add(newRow);
+        context.get().addRow(newRow);
         return newRow;
     }
 
@@ -97,10 +93,66 @@ class TableCategory {
         return or((Object) self, argument);
     }
 
+    public static void setProperty(String property, @Nullable Object newValue) {
+        context.get().addProperty(property, newValue);
+    }
+
+    private static <T, R> R parse(BuilderDSL<T> builder, Closure<?> tableData, Function<Context<T>, R> result) {
+        Context<T> c = new Context<>(builder);
+        context.set(c);
+
+        tableData.setResolveStrategy(Closure.DELEGATE_FIRST);
+        tableData.setDelegate(new VariableResolvingDelegate());
+
+        // If tableData.call() happens to call this method again, our global variable 'context'
+        // gets all messed up - TODO: maybe a stack push/pop mechanism should be introduced
+        GroovyCategorySupport.use(TableDSL.class, tableData);
+
+        return result.apply(c);
+    }
+
     private static class VariableResolvingDelegate extends GroovyObjectSupport {
+
         @Override
         public Object getProperty(String property) {
             return new Variable(property);
+        }
+
+        @Override
+        public void setProperty(String property, Object newValue) {
+            // TODO: when is it called?
+            TableDSL.setProperty(property, newValue);
+        }
+
+    }
+
+    private static class Context<T> {
+
+        private BuilderDSL<T> builder;
+        private final List<TableRow> collectedRows;
+
+        public Context(BuilderDSL<T> builder) {
+            this.builder = builder;
+            this.collectedRows = new ArrayList<>();
+        }
+
+        public void addRow(TableRow newRow) {
+            collectedRows.add(newRow);
+        }
+
+        public void addProperty(String property, @Nullable Object newValue) {
+            builder = builder.with(property, newValue);
+        }
+
+        @Nullable
+        public T buildSingle() {
+            return builder.build();
+        }
+
+        public List<T> buildMany() {
+            return Table.of(collectedRows).stream()
+                    .map(props -> builder.with(props).build())
+                    .collect(Collectors.toList());
         }
     }
 }
