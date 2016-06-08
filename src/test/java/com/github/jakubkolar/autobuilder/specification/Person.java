@@ -34,7 +34,7 @@ import java.util.List;
  * given names and addresses
  */
 
-public class User {
+public class Person {
 
     private String firstName;
     private String lastName;
@@ -53,7 +53,7 @@ public class User {
     private Instant lastModified;
     private String lastModifiedBy;
 
-    public User() {
+    public Person() {
         // No-arg constructor required by many frameworks
     }
 

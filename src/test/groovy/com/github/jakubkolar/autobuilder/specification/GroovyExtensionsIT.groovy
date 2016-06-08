@@ -38,14 +38,14 @@ class GroovyExtensionsIT extends Specification {
 
     def "Create a single object directly"() {
         when:
-        User user = User.of {
+        Person person = Person.of {
             (lastName, firstName) = ['Granger', 'Hermione']
             age = 18
             address.city = LONDON
         }
 
         then:
-        user.with {
+        person.with {
             assert lastName == 'Granger'
             assert firstName == 'Hermione'
             assert age == 18
@@ -58,29 +58,29 @@ class GroovyExtensionsIT extends Specification {
 
     def "Builder supports coercion to the target type and its supertypes"() {
         when:
-        def user = a(User).with(lastName: 'Granger', firstName: 'Hermione') as User
+        def person = a(Person).with(lastName: 'Granger', firstName: 'Hermione') as Person
         def str = a(String) as CharSequence
 
         then:
-        assert user instanceof User
+        assert person instanceof Person
         assert str instanceof CharSequence
-        assert [user.lastName, user.firstName] == ['Granger', 'Hermione']
+        assert [person.lastName, person.firstName] == ['Granger', 'Hermione']
     }
 
     def "Builder fails when trying to coerce to a non-compatible type"() {
         when:
-        a(User).with(lastName: 'Granger', firstName: 'Hermione') as Address
+        a(Person).with(lastName: 'Granger', firstName: 'Hermione') as Address
 
         then:
         def e = thrown(GroovyCastException)
         assert e.message?.contains("Cannot cast")
-        assert e.message?.contains("${User.name}")
+        assert e.message?.contains("${Person.name}")
         assert e.message?.contains("${Address.name}")
     }
 
     def "Create a collection from a simple table"() {
         when:
-        def users = a User with(emailVerified: true) fromTable {
+        def people = a Person with(emailVerified: true) fromTable {
             login      | email
             'harryp'   | 'seeker731@gryffindor.com'
             'grangerh' | 'readinglover@spew.org'
@@ -88,25 +88,25 @@ class GroovyExtensionsIT extends Specification {
         }
 
         then:
-        users.each { u ->
+        people.each { u ->
             assert u.id != null
             assert u.created != null
             assert u.address != null
             assert !u.deletionFlag
             assert u.emailVerified
         }
-        def actual = prettyPrintSimple(users)
+        def actual = prettyPrintSimple(people)
         def expected = prettyPrint(
-                'User[harryp, seeker731@gryffindor.com]',
-                'User[grangerh, readinglover@spew.org]',
-                'User[albus, apwbd@beards.com]'
+                'Person[harryp, seeker731@gryffindor.com]',
+                'Person[grangerh, readinglover@spew.org]',
+                'Person[albus, apwbd@beards.com]'
         )
         assert actual == expected
     }
 
     def "Create a collection from a simple table - using the class"() {
         when:
-        List<User> users = User.fromTable {
+        List<Person> people = Person.fromTable {
             emailVerified = true
 
             //---------------------------------------
@@ -120,40 +120,40 @@ class GroovyExtensionsIT extends Specification {
         }
 
         then:
-        users.each { u ->
+        people.each { u ->
             assert u.id != null
             assert u.created != null
             assert u.address != null
             assert u.deletionFlag
             assert u.emailVerified
         }
-        def actual = prettyPrintSimple(users)
+        def actual = prettyPrintSimple(people)
         def expected = prettyPrint(
-                'User[harryp, seeker731@gryffindor.com]',
-                'User[grangerh, readinglover@spew.org]',
-                'User[albus, apwbd@beards.com]'
+                'Person[harryp, seeker731@gryffindor.com]',
+                'Person[grangerh, readinglover@spew.org]',
+                'Person[albus, apwbd@beards.com]'
         )
         assert actual == expected
     }
 
     def "Create an empty collection from an empty table"() {
         when:
-        def users = a User fromTable {
+        def people = a Person fromTable {
             login | email
         }
 
         then:
-        assert users.empty
+        assert people.empty
     }
 
     def "Create an empty collection from an empty table - using the class"() {
         when:
-        def users = User.fromTable {
+        def people = Person.fromTable {
             login | email
         }
 
         then:
-        assert users.empty
+        assert people.empty
     }
 
 
@@ -162,7 +162,7 @@ class GroovyExtensionsIT extends Specification {
         def today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)
 
         when:
-        def users = a User with(Instant, today) fromTable {
+        def people = a Person with(Instant, today) fromTable {
             firstName  | middleNames            | lastName     | age | address.city
             'Harry'    | ['James']              | 'Potter'     | 17  | LITTLE_WHINGING
             'Ronald'   | ['Bilius']             | 'Weasley'    | 17  | OTTERY_ST_CATCHPOLE
@@ -171,17 +171,17 @@ class GroovyExtensionsIT extends Specification {
         }
 
         then:
-        users.each { u ->
+        people.each { u ->
             assert u.id != null
             assert u.created.is(today)
             assert u.lastModified.is(today)
         }
-        def actual = prettyPrint(users)
+        def actual = prettyPrint(people)
         def expected = prettyPrint(
-                'User[name=Harry James Potter, age=17, city=LITTLE_WHINGING]',
-                'User[name=Ronald Bilius Weasley, age=17, city=OTTERY_ST_CATCHPOLE]',
-                'User[name=Hermione Jean Granger, age=18, city=LONDON]',
-                'User[name=Albus Percival W. B. Dumbledore, age=115, city=HOGWARTS]',
+                'Person[name=Harry James Potter, age=17, city=LITTLE_WHINGING]',
+                'Person[name=Ronald Bilius Weasley, age=17, city=OTTERY_ST_CATCHPOLE]',
+                'Person[name=Hermione Jean Granger, age=18, city=LONDON]',
+                'Person[name=Albus Percival W. B. Dumbledore, age=115, city=HOGWARTS]',
         )
         assert actual == expected
     }
@@ -190,7 +190,7 @@ class GroovyExtensionsIT extends Specification {
         when:
         // TODO: So far there is no way to invoke other methods on the contextual BuilderDSL
         // (like .with(Instant, today) in the previous test)
-        List<User> users = User.fromTable {
+        List<Person> people = Person.fromTable {
             // age = 17 FIXME: AB-025 Local Named resolver should allow registering a field twice
 
             firstName  | middleNames            | lastName     | age | address.city
@@ -201,40 +201,40 @@ class GroovyExtensionsIT extends Specification {
         }
 
         then:
-        users.each { u ->
+        people.each { u ->
             assert u.id != null
         }
-        def actual = prettyPrint(users)
+        def actual = prettyPrint(people)
         def expected = prettyPrint(
-                'User[name=Harry James Potter, age=17, city=LITTLE_WHINGING]',
-                'User[name=Ronald Bilius Weasley, age=17, city=OTTERY_ST_CATCHPOLE]',
-                'User[name=Hermione Jean Granger, age=18, city=LONDON]',
-                'User[name=Albus Percival W. B. Dumbledore, age=115, city=HOGWARTS]',
+                'Person[name=Harry James Potter, age=17, city=LITTLE_WHINGING]',
+                'Person[name=Ronald Bilius Weasley, age=17, city=OTTERY_ST_CATCHPOLE]',
+                'Person[name=Hermione Jean Granger, age=18, city=LONDON]',
+                'Person[name=Albus Percival W. B. Dumbledore, age=115, city=HOGWARTS]',
         )
         assert actual == expected
     }
 
     // TODO: test BuilderDSL.asType extension
 
-    String prettyPrintSimple(List<User> users) {
-        users.collect {
-            "User[$it.login, $it.email]"
+    String prettyPrintSimple(List<Person> people) {
+        people.collect {
+            "Person[$it.login, $it.email]"
         }
         .sort()
         .join('\n')
     }
 
-    String prettyPrint(List<User> users) {
-        users.collect {
-            "User[name=${[it.firstName, *it.middleNames, it.lastName].join(' ')}, " +
+    String prettyPrint(List<Person> people) {
+        people.collect {
+            "Person[name=${[it.firstName, *it.middleNames, it.lastName].join(' ')}, " +
                     "age=$it.age, city=$it.address.city]"
         }
         .sort()
         .join('\n')
     }
 
-    String prettyPrint(String... users) {
-        users.toSorted().join('\n')
+    String prettyPrint(String... people) {
+        people.toSorted().join('\n')
     }
 
 }
