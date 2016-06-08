@@ -22,47 +22,55 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions
+package com.github.jakubkolar.autobuilder.groovy;
 
-import com.github.jakubkolar.autobuilder.api.BuilderDSL
-import com.github.jakubkolar.autobuilder.spi.ValueResolver
+import groovy.lang.GroovyObjectSupport;
 
-import javax.annotation.Nullable
+import java.util.Objects;
 
-class BuilderStub implements BuilderDSL<Map<String, Object>> {
+final class Variable extends GroovyObjectSupport {
 
-    private final Map<String, Object> properties
+    private final String name;
 
-    BuilderStub() {
-        this([:])
+    public Variable(String name) {
+        this.name = name;
     }
 
-    private BuilderStub(Map<String, Object> properties) {
-        this.properties = properties
-    }
-
-    @Override
-    BuilderDSL<Map<String, Object>> with(String property, @Nullable Object value) {
-        new BuilderStub(properties + [(property): value])
+    public String getName() {
+        return name;
     }
 
     @Override
-    BuilderDSL<Map<String, Object>> with(Map<String, Object> properties) {
-        new BuilderStub(this.properties + properties)
+    public Object getProperty(String property) {
+        // TODO: document - "to resolve nested properties"
+        return new Variable(name + '.' + property);
     }
 
     @Override
-    BuilderDSL<Map<String, Object>> with(ValueResolver userResolver) {
-        this
+    public void setProperty(String property, Object newValue) {
+        // TODO: when is it called?
+        TableDSL.setProperty(name + '.' + property, newValue);
     }
 
     @Override
-    <R> BuilderDSL<Map<String, Object>> with(Class<R> type, @Nullable R value) {
-        this
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override
-    Map<String, Object> build() {
-        Collections.unmodifiableMap(properties)
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Variable other = (Variable) obj;
+        return Objects.equals(this.name, other.name);
+    }
+
+    @Override
+    public String toString() {
+        return "Variable[" + name + ']';
     }
 }

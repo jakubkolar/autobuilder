@@ -22,28 +22,17 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions
-
-import nl.jqno.equalsverifier.EqualsVerifier
-import spock.lang.Specification
-
-class VariableTest extends Specification {
-
-    def "It is a value object"() {
-        expect:
-        EqualsVerifier.forClass(Variable).verify()
-    }
-
-    def "It allows to resolve nested properties as new variables"() {
-        given:
-        def x = new Variable('x')
-
-        when:
-        def nested = x.y.z as Variable
-
-        then:
-        assert nested == new Variable('x.y.z')
-        assert nested.getName() == 'x.y.z'
-    }
-
-}
+/**
+ * Integration with the <a href="http://groovy-lang.org/"><i>Groovy</i></a> language.
+ *
+ * <p> All classes specific to the <i>Groovy</i> support of the <i>AutoBuilder</i> library
+ * are located in this package. All <em>public</em> classes in this package are treated as
+ * an API, with the same restrictions and guarantees as interfaces and classes from the <a
+ * href="../api/package-summary.html">api package</a>.
+ *
+ * <p> <b>Important note:</b> To use the features from this package you will need to make
+ * sure to have the <i>Groovy</i> jar on your classpath. <i>AutoBuilder</i> does not
+ * depend on it directly in order not to transitively bring the dependency to projects not
+ * using <i>Groovy</i>.
+ */
+package com.github.jakubkolar.autobuilder.groovy;

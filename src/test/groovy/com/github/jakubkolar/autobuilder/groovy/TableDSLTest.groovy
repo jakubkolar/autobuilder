@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions
+package com.github.jakubkolar.autobuilder.groovy
 
 import spock.lang.Specification
 

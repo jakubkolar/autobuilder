@@ -22,44 +22,43 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions
+package com.github.jakubkolar.autobuilder.groovy;
 
-import spock.lang.Specification
+import com.github.jakubkolar.autobuilder.AutoBuilder;
+import com.github.jakubkolar.autobuilder.api.BuilderDSL;
+import com.google.common.annotations.Beta;
+import groovy.lang.Closure;
 
-import java.util.stream.Collectors
+import javax.annotation.Nullable;
+import java.util.List;
 
-@Newify(Variable)
-class TableTest extends Specification {
+/**
+ * TODO
+ *
+ * @since 0.2
+ */
+@Beta
+public class BuilderDSLGroovyMethods {
 
-    def "It provides a readable to-string for debugging"() {
-        given:
-        def header = TableRow.of(Variable('a'), Variable('b'))
-        def row1 = TableRow.of(1, 2)
-        def row2 = TableRow.of(3, 4)
-
-        when:
-        def table = Table.of([header, row1, row2])
-
-        then:
-        assert table.toString() ==
-                "Table[header=[a, b],rows=[TableRow[1, 2], TableRow[3, 4]]]"
+    private BuilderDSLGroovyMethods() {
+        // Groovy extension module - static methods only
     }
 
-    def "It maps the rows to property values using the header"() {
-        given:
-        def header = TableRow.of(Variable('a'), Variable('b'))
-        def row1 = TableRow.of(1, 2)
-        def row2 = TableRow.of(3, 4)
-        def table = Table.of([header, row1, row2])
+    @Nullable
+    public static <T> T of(Class<T> self, Closure<?> instanceData) {
+        return TableDSL.parseSingle(AutoBuilder.instanceOf(self), instanceData);
+    }
 
-        when:
-        def contents = table.stream().collect(Collectors.toList())
+    public static <T> List<T> fromTable(Class<T> self, Closure<?> tableData) {
+        return fromTable(AutoBuilder.instanceOf(self), tableData);
+    }
 
-        then:
-        assert contents == [
-                [a: 1, b: 2],
-                [a: 3, b: 4],
-        ]
+    public static <T> List<T> fromTable(BuilderDSL<T> self, Closure<?> tableData) {
+        return TableDSL.parseTable(self, tableData);
+    }
+
+    public static <T, U> U asType(BuilderDSL<T> self, Class<U> target) {
+        return target.cast(self.build());
     }
 
 }

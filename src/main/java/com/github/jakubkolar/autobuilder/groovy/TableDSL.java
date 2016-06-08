@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions;
+package com.github.jakubkolar.autobuilder.groovy;
 
 import com.github.jakubkolar.autobuilder.api.BuilderDSL;
 import groovy.lang.Closure;

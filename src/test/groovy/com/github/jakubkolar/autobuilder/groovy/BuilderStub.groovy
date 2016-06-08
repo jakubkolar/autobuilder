@@ -22,55 +22,47 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions;
+package com.github.jakubkolar.autobuilder.groovy
 
-import groovy.lang.GroovyObjectSupport;
+import com.github.jakubkolar.autobuilder.api.BuilderDSL
+import com.github.jakubkolar.autobuilder.spi.ValueResolver
 
-import java.util.Objects;
+import javax.annotation.Nullable
 
-final class Variable extends GroovyObjectSupport {
+class BuilderStub implements BuilderDSL<Map<String, Object>> {
 
-    private final String name;
+    private final Map<String, Object> properties
 
-    public Variable(String name) {
-        this.name = name;
+    BuilderStub() {
+        this([:])
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Object getProperty(String property) {
-        // TODO: document - "to resolve nested properties"
-        return new Variable(name + '.' + property);
+    private BuilderStub(Map<String, Object> properties) {
+        this.properties = properties
     }
 
     @Override
-    public void setProperty(String property, Object newValue) {
-        // TODO: when is it called?
-        TableDSL.setProperty(name + '.' + property, newValue);
+    BuilderDSL<Map<String, Object>> with(String property, @Nullable Object value) {
+        new BuilderStub(properties + [(property): value])
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    BuilderDSL<Map<String, Object>> with(Map<String, Object> properties) {
+        new BuilderStub(this.properties + properties)
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        Variable other = (Variable) obj;
-        return Objects.equals(this.name, other.name);
+    BuilderDSL<Map<String, Object>> with(ValueResolver userResolver) {
+        this
     }
 
     @Override
-    public String toString() {
-        return "Variable[" + name + ']';
+    <R> BuilderDSL<Map<String, Object>> with(Class<R> type, @Nullable R value) {
+        this
+    }
+
+    @Override
+    Map<String, Object> build() {
+        Collections.unmodifiableMap(properties)
     }
 }

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.extensions;
+package com.github.jakubkolar.autobuilder.groovy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
