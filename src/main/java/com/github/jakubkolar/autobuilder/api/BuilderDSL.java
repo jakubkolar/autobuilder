@@ -136,7 +136,7 @@ import java.util.Map;
  * // ]
  * }</pre>
  *
- * @param <T> the type of object to be built
+ * @param <T> the type of the object to be built
  * @author Jakub Kolar
  * @since 0.0.1
  * @see ValueResolver

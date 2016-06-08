@@ -83,18 +83,34 @@ public class AutoBuilder {
     }
 
     /**
-     * TODO
+     * A shortcut for the {@link #instanceOf(Class)} method.
+     *
+     * <p> Meant to be imported with {@code import static} and used as a DSL element in
+     * tests.
+     *
+     * @param type class object for the type the builder will build
+     * @param <T> the type of objects the builder will build
+     * @return a brand new instance of {@link BuilderDSL}
      *
      * @since 0.2
+     * @see #instanceOf(Class)
      */
     public static <T> BuilderDSL<T> a(Class<T> type) {
         return factory.create(type);
     }
 
     /**
-     * TODO
+     * A shortcut for the {@link #instanceOf(Class)} method.
+     *
+     * <p> Meant to be imported with {@code import static} and used as a DSL element in
+     * tests.
+     *
+     * @param type class object for the type the builder will build
+     * @param <T> the type of objects the builder will build
+     * @return a brand new instance of {@link BuilderDSL}
      *
      * @since 0.2
+     * @see #instanceOf(Class)
      */
     public static <T> BuilderDSL<T> an(Class<T> type) {
         return factory.create(type);

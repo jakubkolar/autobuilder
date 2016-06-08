@@ -179,6 +179,12 @@
             <artifactId>spock-core</artifactId>
             <version>1.0-groovy-2.4</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

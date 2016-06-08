@@ -103,6 +103,25 @@ class TableDSLTest extends Specification {
         ]
     }
 
+    def "Table DSL overrides assignment DSL irrespective of order"() {
+        when:
+        def table = TableDSL.parseTable builder, {
+            a = 'will_be_overridden'
+
+            a | b.c
+            1 | 2
+            3 | 4
+
+            b.c = 'will_be_overridden'
+        }
+
+        then:
+        assert table == [
+                ['a': 1, 'b.c': 2],
+                ['a': 3, 'b.c': 4],
+        ]
+    }
+
     def "Table DSL correctly interprets the | operator for all possible values"() {
         when:
         def table = TableDSL.parseTable builder, {

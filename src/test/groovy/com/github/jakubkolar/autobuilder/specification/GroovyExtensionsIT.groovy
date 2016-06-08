@@ -24,6 +24,7 @@
 
 package com.github.jakubkolar.autobuilder.specification
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import spock.lang.Specification
 
 import java.time.Instant
@@ -71,8 +72,10 @@ class GroovyExtensionsIT extends Specification {
         a(User).with(lastName: 'Granger', firstName: 'Hermione') as Address
 
         then:
-        def e = thrown(ClassCastException)
-        assert e.message == "Cannot cast ${User.name} to ${Address.name}"
+        def e = thrown(GroovyCastException)
+        assert e.message?.contains("Cannot cast")
+        assert e.message?.contains("${User.name}")
+        assert e.message?.contains("${Address.name}")
     }
 
     def "Create a collection from a simple table"() {
@@ -105,10 +108,15 @@ class GroovyExtensionsIT extends Specification {
         when:
         List<User> users = User.fromTable {
             emailVerified = true
+
+            //---------------------------------------
             login      | email
             'harryp'   | 'seeker731@gryffindor.com'
             'grangerh' | 'readinglover@spew.org'
             'albus'    | 'apwbd@beards.com'
+            //---------------------------------------
+
+            deletionFlag = true
         }
 
         then:
@@ -116,7 +124,7 @@ class GroovyExtensionsIT extends Specification {
             assert u.id != null
             assert u.created != null
             assert u.address != null
-            assert !u.deletionFlag
+            assert u.deletionFlag
             assert u.emailVerified
         }
         def actual = prettyPrintSimple(users)
@@ -183,6 +191,8 @@ class GroovyExtensionsIT extends Specification {
         // TODO: So far there is no way to invoke other methods on the contextual BuilderDSL
         // (like .with(Instant, today) in the previous test)
         List<User> users = User.fromTable {
+            // age = 17 FIXME: AB-025 Local Named resolver should allow registering a field twice
+
             firstName  | middleNames            | lastName     | age | address.city
             'Harry'    | ['James']              | 'Potter'     | 17  | LITTLE_WHINGING
             'Ronald'   | ['Bilius']             | 'Weasley'    | 17  | OTTERY_ST_CATCHPOLE

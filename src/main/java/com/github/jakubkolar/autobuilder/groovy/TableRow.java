@@ -46,7 +46,9 @@ class TableRow {
     }
 
     /**
-     * Implementation of the '|' operator for more contents to the table row.
+     * Implementation of the '|' operator for {@code TableRow}s.
+     *
+     * Used to add the next cell to the table row.
      */
     public TableRow or(Object argument) {
         data.add(argument);
