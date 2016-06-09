@@ -156,7 +156,6 @@ class GroovyExtensionsIT extends Specification {
         assert people.empty
     }
 
-
     def "Create a collection from a table with nested properties"() {
         given:
         def today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)
@@ -214,14 +213,8 @@ class GroovyExtensionsIT extends Specification {
         assert actual == expected
     }
 
-    // TODO: test BuilderDSL.asType extension
-
     String prettyPrintSimple(List<Person> people) {
-        people.collect {
-            "Person[$it.login, $it.email]"
-        }
-        .sort()
-        .join('\n')
+        people.collect { "Person[$it.login, $it.email]" } sort() join '\n'
     }
 
     String prettyPrint(List<Person> people) {
@@ -234,7 +227,7 @@ class GroovyExtensionsIT extends Specification {
     }
 
     String prettyPrint(String... people) {
-        people.toSorted().join('\n')
+        people.toSorted() join '\n'
     }
 
 }

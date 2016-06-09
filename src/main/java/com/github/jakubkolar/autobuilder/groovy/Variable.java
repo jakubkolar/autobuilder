@@ -42,13 +42,18 @@ final class Variable extends GroovyObjectSupport {
 
     @Override
     public Object getProperty(String property) {
-        // TODO: document - "to resolve nested properties"
+        // Called when a nested property is resolved, e.g. in:
+        // TableDSL.parseSingle builder, { a.b.c = 1 }
+        // this method will be called as: v.getProperty('b'), where v = Variable('a'),
+        // result will be: Variable('a.b')
         return new Variable(name + '.' + property);
     }
 
     @Override
     public void setProperty(String property, Object newValue) {
-        // TODO: when is it called?
+        // Called when a nested property is set, e.g. in:
+        // TableDSL.parseSingle builder, { a.b.c = 1 }
+        // this method will be called as: v.setProperty('c', 1), where v = Variable('a.b')
         TableDSL.setProperty(name + '.' + property, newValue);
     }
 

@@ -154,19 +154,17 @@ class TableDSLTest extends Specification {
             5 | 6 | 7 | 8
         }
 
-
         then:
         def e = thrown(RuntimeException)
-        assert e.message?.toLowerCase().contains("not a header")
+        assert e.message?.toLowerCase()?.contains("not a header")
         assert e.message?.contains("TableRow[1, 2, 3, 4]")
     }
 
-    def "Empty table must have at least one row (the header)"() {
+    def "Empty table must have at least one row - the header"() {
         when:
         TableDSL.parseTable builder, {
 
         }
-
 
         then:
         def e = thrown(RuntimeException)
@@ -180,10 +178,9 @@ class TableDSLTest extends Specification {
             1
         }
 
-
         then:
         def e = thrown(RuntimeException)
-        assert e.message?.toLowerCase().contains("at least 2 columns")
+        assert e.message?.toLowerCase()?.contains("at least 2 columns")
     }
 
 }

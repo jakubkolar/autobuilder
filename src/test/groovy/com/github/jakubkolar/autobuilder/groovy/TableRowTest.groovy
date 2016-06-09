@@ -56,7 +56,7 @@ class TableRowTest extends Specification {
         def header = row.toHeader()
 
         then:
-        assert header == [a: 0, b: 1, c:2]
+        assert header == [a: 0, b: 1, c: 2]
     }
 
     def "Row can be converted to properties using positions from a header row"() {
@@ -64,7 +64,7 @@ class TableRowTest extends Specification {
         def row = TableRow.of('value of a', 'value of b') | 'value of c'
 
         when:
-        def properties = row.toProperties([a: 0, b: 1, c: 2])
+        def properties = row.toProperties(a: 0, b: 1, c: 2)
 
         then:
         assert properties == [a: 'value of a', b: 'value of b', c: 'value of c']
@@ -79,7 +79,7 @@ class TableRowTest extends Specification {
 
         then:
         def e = thrown(IllegalStateException)
-        assert e.message.contains("element 'c'")
+        assert e.message?.contains("element 'c'")
     }
 
     def "Every position defined by a header must exist in the row"() {
@@ -87,7 +87,7 @@ class TableRowTest extends Specification {
         def row = TableRow.of('value of a', 'value of b') | 'value of c'
 
         when:
-        row.toProperties([a: 0, b: 1, c: 2, xyz: 99])
+        row.toProperties(a: 0, b: 1, c: 2, xyz: 99)
 
         then:
         def e = thrown(IllegalStateException)

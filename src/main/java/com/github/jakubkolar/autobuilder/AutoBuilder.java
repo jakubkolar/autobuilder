@@ -50,7 +50,9 @@ public class AutoBuilder {
     private static final BuilderDSLFactory factory;
     private static final ResolversRegistry registry;
 
-    private AutoBuilder() { }
+    private AutoBuilder() {
+        // Utility class is not instantiable, exclude this constructor from API docs
+    }
 
     @Singleton
     @Component(modules = AutoBuilderModule.class)

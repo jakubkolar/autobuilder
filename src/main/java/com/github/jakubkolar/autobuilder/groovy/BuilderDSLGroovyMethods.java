@@ -53,7 +53,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST;
 public class BuilderDSLGroovyMethods {
 
     private BuilderDSLGroovyMethods() {
-        // Groovy extension module - static methods only
+        // Utility class is not instantiable, exclude this constructor from API docs
     }
 
     /**
