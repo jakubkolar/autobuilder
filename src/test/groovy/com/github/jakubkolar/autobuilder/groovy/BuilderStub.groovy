@@ -22,31 +22,47 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
+package com.github.jakubkolar.autobuilder.groovy
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
+import com.github.jakubkolar.autobuilder.api.BuilderDSL
+import com.github.jakubkolar.autobuilder.spi.ValueResolver
 
-import java.math.BigDecimal;
+import javax.annotation.Nullable
 
-public class ExtensionExampleDTO {
+class BuilderStub implements BuilderDSL<Map<String, Object>> {
 
-    // BigDecimalResolver
-    BigDecimal decimalField;
+    private final Map<String, Object> properties
 
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
+    BuilderStub() {
+        this([:])
+    }
 
-    @Incubating
-    String extensionTestResolverField;
+    private BuilderStub(Map<String, Object> properties) {
+        this.properties = properties
+    }
+
+    @Override
+    BuilderDSL<Map<String, Object>> with(String property, @Nullable Object value) {
+        new BuilderStub(properties + [(property): value])
+    }
+
+    @Override
+    BuilderDSL<Map<String, Object>> with(Map<String, Object> properties) {
+        new BuilderStub(this.properties + properties)
+    }
+
+    @Override
+    BuilderDSL<Map<String, Object>> with(ValueResolver userResolver) {
+        this
+    }
+
+    @Override
+    <R> BuilderDSL<Map<String, Object>> with(Class<R> type, @Nullable R value) {
+        this
+    }
+
+    @Override
+    Map<String, Object> build() {
+        Collections.unmodifiableMap(properties)
+    }
 }

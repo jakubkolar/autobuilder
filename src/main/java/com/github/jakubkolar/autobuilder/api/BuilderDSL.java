@@ -136,7 +136,7 @@ import java.util.Map;
  * // ]
  * }</pre>
  *
- * @param <T> the type of object to be built
+ * @param <T> the type of the object to be built
  * @author Jakub Kolar
  * @since 0.0.1
  * @see ValueResolver
@@ -221,6 +221,7 @@ public interface BuilderDSL<T> {
      * @param <R>   the type to be resolved
      *
      * @return a new {@code BuilderDSL<T>} with the requested modification(s)
+     * @since 0.2
      */
     <R> BuilderDSL<T> with(Class<R> type, @Nullable R value);
 

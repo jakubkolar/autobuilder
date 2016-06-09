@@ -24,29 +24,9 @@
 
 package com.github.jakubkolar.autobuilder.specification;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
+public class Address {
 
-import java.math.BigDecimal;
+    String street;
+    City city;
 
-public class ExtensionExampleDTO {
-
-    // BigDecimalResolver
-    BigDecimal decimalField;
-
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
-
-    @Incubating
-    String extensionTestResolverField;
 }

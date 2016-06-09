@@ -29,8 +29,6 @@ import com.github.jakubkolar.autobuilder.spi.ValueResolver
 import spock.lang.Specification
 
 import javax.annotation.Nullable
-import java.lang.annotation.Annotation
-import java.lang.reflect.Type
 
 class GlobalAndLocalConfigurationIT extends Specification {
 

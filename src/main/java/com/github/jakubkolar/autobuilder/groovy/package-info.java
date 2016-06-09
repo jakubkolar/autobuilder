@@ -22,31 +22,17 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
-
-import java.math.BigDecimal;
-
-public class ExtensionExampleDTO {
-
-    // BigDecimalResolver
-    BigDecimal decimalField;
-
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
-
-    @Incubating
-    String extensionTestResolverField;
-}
+/**
+ * Integration with the <a href="http://groovy-lang.org/"><i>Groovy</i></a> language.
+ *
+ * <p> All classes specific to the <i>Groovy</i> support of the <i>AutoBuilder</i> library
+ * are located in this package. All <em>public</em> classes in this package are treated as
+ * an API, with the same restrictions and guarantees as interfaces and classes from the <a
+ * href="../api/package-summary.html">api package</a>.
+ *
+ * <p> <b>Important note:</b> To use the features from this package you will need to make
+ * sure to have the <i>Groovy</i> jar on your classpath. <i>AutoBuilder</i> does not
+ * depend on it directly in order not to transitively bring the dependency to projects not
+ * using <i>Groovy</i>.
+ */
+package com.github.jakubkolar.autobuilder.groovy;

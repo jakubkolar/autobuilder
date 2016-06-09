@@ -33,10 +33,8 @@ import com.github.jakubkolar.autobuilder.spi.ValueResolver;
 import com.google.common.annotations.Beta;
 import dagger.Component;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,6 +42,7 @@ import java.util.Set;
  *
  * TODO: AB-003
  *
+ * @since 0.0.1
  */
 @Beta
 public class AutoBuilder {
@@ -51,7 +50,9 @@ public class AutoBuilder {
     private static final BuilderDSLFactory factory;
     private static final ResolversRegistry registry;
 
-    private AutoBuilder() { }
+    private AutoBuilder() {
+        // Utility class is not instantiable, exclude this constructor from API docs
+    }
 
     @Singleton
     @Component(modules = AutoBuilderModule.class)
@@ -83,9 +84,38 @@ public class AutoBuilder {
         return factory.create(type);
     }
 
-    @Nullable
-    public static <T> T create(Class<T> type, Map<String, Object> properties) {
-        return instanceOf(type).with(properties).build();
+    /**
+     * A shortcut for the {@link #instanceOf(Class)} method.
+     *
+     * <p> Meant to be imported with {@code import static} and used as a DSL element in
+     * tests.
+     *
+     * @param type class object for the type the builder will build
+     * @param <T> the type of objects the builder will build
+     * @return a brand new instance of {@link BuilderDSL}
+     *
+     * @since 0.2
+     * @see #instanceOf(Class)
+     */
+    public static <T> BuilderDSL<T> a(Class<T> type) {
+        return factory.create(type);
+    }
+
+    /**
+     * A shortcut for the {@link #instanceOf(Class)} method.
+     *
+     * <p> Meant to be imported with {@code import static} and used as a DSL element in
+     * tests.
+     *
+     * @param type class object for the type the builder will build
+     * @param <T> the type of objects the builder will build
+     * @return a brand new instance of {@link BuilderDSL}
+     *
+     * @since 0.2
+     * @see #instanceOf(Class)
+     */
+    public static <T> BuilderDSL<T> an(Class<T> type) {
+        return factory.create(type);
     }
 
 }

@@ -108,6 +108,13 @@
 
         <!-- Other -->
 
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>2.4.7</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- This works with dagger 2.1 (now only snapshot) -->
         <dependency>
             <groupId>com.google.auto.factory</groupId>
@@ -168,20 +175,26 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>2.4.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
             <version>1.0-groovy-2.4</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

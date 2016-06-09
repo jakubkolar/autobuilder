@@ -22,31 +22,44 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
+package com.github.jakubkolar.autobuilder.groovy
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
+import spock.lang.Specification
 
-import java.math.BigDecimal;
+import java.util.stream.Collectors
 
-public class ExtensionExampleDTO {
+@Newify(Variable)
+class TableTest extends Specification {
 
-    // BigDecimalResolver
-    BigDecimal decimalField;
+    def "It provides a readable to-string for debugging"() {
+        given:
+        def header = TableRow.of(Variable('a'), Variable('b'))
+        def row1 = TableRow.of(1, 2)
+        def row2 = TableRow.of(3, 4)
 
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
+        when:
+        def table = Table.of([header, row1, row2])
 
-    @Incubating
-    String extensionTestResolverField;
+        then:
+        assert table.toString() ==
+                "Table[header=[a, b],rows=[TableRow[1, 2], TableRow[3, 4]]]"
+    }
+
+    def "It maps the rows to property values using the header"() {
+        given:
+        def header = TableRow.of(Variable('a'), Variable('b'))
+        def row1 = TableRow.of(1, 2)
+        def row2 = TableRow.of(3, 4)
+        def table = Table.of([header, row1, row2])
+
+        when:
+        def contents = table.stream().collect(Collectors.toList())
+
+        then:
+        assert contents == [
+                [a: 1, b: 2],
+                [a: 3, b: 4],
+        ]
+    }
+
 }

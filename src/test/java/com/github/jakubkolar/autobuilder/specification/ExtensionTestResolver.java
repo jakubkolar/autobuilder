@@ -25,17 +25,12 @@
 package com.github.jakubkolar.autobuilder.specification;
 
 import com.github.jakubkolar.autobuilder.spi.ValueResolver;
-import com.google.auto.service.AutoService;
-import com.google.common.annotations.Beta;
-import com.google.common.annotations.VisibleForTesting;
 import org.mockito.Incubating;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 
 /**

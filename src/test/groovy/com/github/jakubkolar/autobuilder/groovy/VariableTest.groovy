@@ -22,31 +22,28 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.specification;
+package com.github.jakubkolar.autobuilder.groovy
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
-import org.mockito.Incubating;
+import nl.jqno.equalsverifier.EqualsVerifier
+import spock.lang.Specification
 
-import java.math.BigDecimal;
+class VariableTest extends Specification {
 
-public class ExtensionExampleDTO {
+    def "It is a value object"() {
+        expect:
+        EqualsVerifier.forClass(Variable).verify()
+    }
 
-    // BigDecimalResolver
-    BigDecimal decimalField;
+    def "It allows to resolve nested properties as new variables"() {
+        given:
+        def x = new Variable('x')
 
-    // GuavaResolver
-    ImmutableCollection<?> collectionField;
-    ImmutableList<?> listField;
-    ImmutableSet<?> setField;
-    ImmutableSortedSet<?> sortedSetField;
-    ImmutableMap<?, ?> mapField;
-    ImmutableSortedMap<?, ?> sortedMapField;
+        when:
+        def nested = x.y.z
 
-    @Incubating
-    String extensionTestResolverField;
+        then:
+        assert nested == new Variable('x.y.z')
+        assert nested.getName() == 'x.y.z'
+    }
+
 }
