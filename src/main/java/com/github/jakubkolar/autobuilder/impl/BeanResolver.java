@@ -83,6 +83,11 @@ class BeanResolver implements ValueResolver {
                     continue;
                 }
 
+                // Groovy will initialize this in the getter
+                if (isGroovyMetaClass(type, field)) {
+                    continue;
+                }
+
                 field.setAccessible(true);
                 // TODO: try to catch field related exceptions?
                 Object fieldValue = resolveField(name, field);
@@ -112,6 +117,22 @@ class BeanResolver implements ValueResolver {
         }
 
         return result;
+    }
+
+    private static boolean isGroovyMetaClass(Class<?> resolvedType, Field field) {
+        if (field.getType().getName().equals("groovy.lang.MetaClass") && field.getName().equals("metaClass")) {
+            // Java-based groovy objects
+            if (field.getDeclaringClass().getName().equals("groovy.lang.GroovyObjectSupport")) {
+                return true;
+            }
+
+            // Groovy objects compiled with groovyc
+            if (field.getDeclaringClass().equals(resolvedType) && field.isSynthetic()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Nullable
