@@ -26,6 +26,6 @@ package com.github.jakubkolar.autobuilder.bug;
 
 public class Parent {
 
-    String parentField;
+    protected String parentField;
 
 }

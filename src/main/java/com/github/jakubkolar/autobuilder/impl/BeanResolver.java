@@ -35,6 +35,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -76,8 +77,7 @@ class BeanResolver implements ValueResolver {
             Preconditions.checkNotNull(instance);
 
             // Now try to initialize the fields
-            // TODO: inherited fields are skipped now
-            for (Field field : type.getDeclaredFields()) {
+            for (Field field : getAllFields(type)) {
                 // Do not touch static fields
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
@@ -100,6 +100,18 @@ class BeanResolver implements ValueResolver {
                     type.toString(), name, annotations.toString(), e.getClass().getSimpleName(), e.getMessage()),
                 e);
         }
+    }
+
+    private static <T> Collection<Field>  getAllFields(Class<T> type) {
+        Collection<Field> result = new ArrayList<>();
+
+        Class<?> currentType = type;
+        while (currentType != null && !currentType.equals(Object.class)) {
+            result.addAll(Arrays.asList(currentType.getDeclaredFields()));
+            currentType = currentType.getSuperclass();
+        }
+
+        return result;
     }
 
     @Nullable
