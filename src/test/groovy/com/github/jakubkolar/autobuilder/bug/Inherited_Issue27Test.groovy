@@ -22,31 +22,30 @@
  * SOFTWARE.
  */
 
-package com.github.jakubkolar.autobuilder.bug;
+package com.github.jakubkolar.autobuilder.bug
 
-import java.util.AbstractCollection;
-import java.util.AbstractSequentialList;
-import java.util.List;
-import java.util.Queue;
+import com.github.jakubkolar.autobuilder.AutoBuilder
+import spock.lang.Specification
 
-public class SupertypeFields {
+class Inherited_Issue27Test extends Specification {
 
-    // Let's use java.util.LinkedList
+    def "Inherited fields from the direct parent are resolved"() {
+        when:
+        def child = AutoBuilder.instanceOf(Child).build()
 
-    // 1. Superclasses (direct & indirect)
-    AbstractSequentialList<?> abstractListField;
-    AbstractCollection<?> abstractCollectionField;
-    Object objectField;
+        then:
+        assert child.parentField != null
+        assert child.childField != null
+    }
 
-    // 2. Implemented interfaces
-    // a) direct
-    List<?> listField;
-    Cloneable cloneableField;
-    // b) indirect
-    Queue<?> queueField;
-    Iterable<?> iterableField;
+    def "Inherited fields from all parents are resolved"() {
+        when:
+        def grandChild = AutoBuilder.instanceOf(GrandChild).build()
 
-    // 3. Global config
-    Object globalOField;
-    Queue<?> globalQField;
+        then:
+        assert grandChild.parentField != null
+        assert grandChild.childField != null
+        assert grandChild.grandChildField != null
+    }
+
 }
