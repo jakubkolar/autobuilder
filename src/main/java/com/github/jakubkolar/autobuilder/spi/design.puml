@@ -1,0 +1,56 @@
+@startuml
+
+interface ValueResolver {
+    +<T> resolve(type, typeInfo, name, annotations): T
+}
+
+class VRContext<T> {
+    builder: BuilderDSL<T>
+    parent: VRContext [opt]
+
+    .. Input ..
+    name: String
+    type: Class<T>
+    typeInfo: Type
+    annotations: Collection
+
+    .. Output ..
+    result: T
+    state: ??
+    errors: ??
+
+}
+
+enum Outcome {
+    NO_RESULT
+    FAILURE
+    RESOLVED
+}
+
+@enduml
+
+@startuml
+
+Not_Resolved: No result yet
+Partially_Resolved: Result exists,
+Partially_Resolved: but incomplete
+Fully_Resolved: Result complete,
+Fully_Resolved: resolution successful
+Failed: Error(s) during resolution
+Failed: cannot proceed
+
+[*] --> Not_Resolved
+
+Not_Resolved --> Partially_Resolved
+Not_Resolved --> Failed
+Not_Resolved --> Fully_Resolved
+Partially_Resolved -> Partially_Resolved
+Partially_Resolved --> Fully_Resolved
+Partially_Resolved --> Failed
+
+Fully_Resolved --> Failed
+Fully_Resolved --> [*]
+Failed --> [*]
+
+
+@enduml
