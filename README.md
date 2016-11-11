@@ -2,7 +2,6 @@ AutoBuilder
 ===========
 
 [![Join the chat at https://gitter.im/autobuilder/Lobby](https://badges.gitter.im/autobuilder/Lobby.svg)](https://gitter.im/autobuilder/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build Status](https://travis-ci.org/jakubkolar/autobuilder.svg?branch=master)](https://travis-ci.org/jakubkolar/autobuilder)
 [![codecov.io](https://img.shields.io/codecov/c/github/jakubkolar/autobuilder/master.svg)](https://codecov.io/github/jakubkolar/autobuilder?branch=master)
 [![Codacy grade](https://img.shields.io/codacy/grade/8aec5ce63c204412b458cba8a87495df.svg)](https://www.codacy.com/app/koljin/autobuilder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jakubkolar/autobuilder&amp;utm_campaign=Badge_Grade)
