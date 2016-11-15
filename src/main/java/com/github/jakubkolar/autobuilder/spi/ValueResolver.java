@@ -48,7 +48,7 @@ import java.util.Optional;
  * <p> Resolver implementations are free to choose whatever resolution approach is needed.
  * <em id="greedy_resolver">Greedy</em> resolvers would resolve as many types as they can
  * and are best suited as the most generic resolvers that are tried if the type cannot be
- * resolved by any other more specific resolver. An example are the <em
+ * setResolved by any other more specific resolver. An example are the <em
  * id="builtin_resolver">built-in resolvers</em> that can resolve some common types and
  * their supertypes from {@link java.lang} and {@link java.util}.
  *
@@ -64,7 +64,7 @@ import java.util.Optional;
  * com.github.jakubkolar.autobuilder.api.BuilderDSL#with(ValueResolver)}.
  *
  * <p> <em id="bean_resolver">Bean resolver</em> is a special resolver within the {@code
- * AutoBuilder} library that is invoked when the type cannot be resolved by any other
+ * AutoBuilder} library that is invoked when the type cannot be setResolved by any other
  * registered resolver. It first tries to instantiate the target type, and then tries to
  * resolve each property of the resulting object recursively using the same resolution
  * process that was used to resolve the original type. It may happen that the target type
@@ -168,18 +168,50 @@ public interface ValueResolver {
      * @param type        the class object for the requested type
      * @param typeInfo    additional type information, if can be determined (e.g. using
      *                    {@link Field#getGenericType()})
-     * @param name        the name of the resolved object (meaning depends on the context
+     * @param name        the name of the setResolved object (meaning depends on the context
      *                    in which the resolution is requested, e.g. it may be a field
      *                    name)
      * @param annotations additional metadata hints for the resolution (content depends
      *                    on the resolution context, e.g. it can be annotations found on
      *                    a field)
-     * @return the resolved instance of type {@code T}, including {@code null} as a valid
+     * @return the setResolved instance of type {@code T}, including {@code null} as a valid
      * return value
      * @throws UnsupportedOperationException if the instance with the given metadata
-     *                                       cannot be resolved by this resolver
+     *                                       cannot be setResolved by this resolver
      */
     @Nullable
     <T> T resolve(Class<T> type, Optional<Type> typeInfo, String name, Collection<Annotation> annotations);
+
+    default <T> void resolve(Context<T> context) {
+        try {
+            T result = resolve(context.getType(), context.getTypeInfo(), context.getName(), context.getAnnotations());
+            context.setResult(result);
+            context.setResolved();
+        } catch (UnsupportedOperationException e) {
+            // TODO: elaborate more on this comment, use info from design doc.
+            // Do not call context.setFailed(e), that would short-circuit the resolution
+            // 'do nothing' is consistent with the current behavior, exception will be
+            // thrown in the end if no-one will set the result
+        }
+    }
+
+    interface Context<T> {
+
+        ValueResolver getResolver();
+        ValueResolver getRootResolver();
+        Optional<Context<?>> getParent();
+
+        String getName();
+        Class<T> getType();
+        Optional<Type> getTypeInfo();
+        Collection<Annotation> getAnnotations();
+
+        T getResult();
+        Optional<Exception> getError();
+
+        void setResult(Object result);
+        void setResolved();
+        void setFailed(Exception e);
+    }
 
 }
